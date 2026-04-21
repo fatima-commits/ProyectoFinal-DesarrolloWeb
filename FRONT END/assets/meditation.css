@@ -1,0 +1,540 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+
+:root {
+    --primary-color: #4CAF50;
+    --primary-light: #5FCC69;
+    --primary-dark: #388E3C;
+    --secondary-color: #7C3AED;
+    --secondary-light: #A78BFA;
+    --bg-dark: #0D0D0D;
+    --bg-darker: #0A0A0A;
+    --bg-card: rgba(20, 20, 20, 0.85);
+    --text-primary: #FFFFFF;
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --text-tertiary: rgba(255, 255, 255, 0.5);
+    --border-light: rgba(255, 255, 255, 0.1);
+    --border-lighter: rgba(255, 255, 255, 0.05);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.4);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 50%, #1a1a2e 100%);
+    color: var(--text-primary);
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/*  FONDO */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -2;
+    pointer-events: none;
+    background-size: cover;
+    background-image: url('https://images.unsplash.com/photo-1722094250550-4993fa28a51b?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDZ8fHxlbnwwfHx8fHw%3D');
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    pointer-events: none;
+}
+
+@keyframes gradientShift {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+        filter: blur(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+/* CONTENEDOR PRINCIPAL */
+.meditation-container {
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: slideUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    opacity: 95%;
+}
+
+/* HEADER */
+.meditation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    animation: fadeInUp 0.8s ease-out 0.1s both;
+}
+
+.header-logo {
+    font-size: 24px;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-primary);
+}
+
+.header-back {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(76, 175, 80, 0.15);
+    border: 1.5px solid rgba(76, 175, 80, 0.4);
+    color: var(--text-primary);
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.header-back:hover {
+    background: rgba(76, 175, 80, 0.25);
+    border-color: rgba(76, 175, 80, 0.6);
+    transform: rotate(-90deg);
+}
+
+/*  PLAYER CARD */
+.player-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(30px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 28px;
+    padding: 40px 24px;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 0 80px rgba(76, 175, 80, 0.05);
+    position: relative;
+    overflow: hidden;
+    animation: scaleIn 0.8s ease-out 0.2s both;
+}
+
+.player-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(76, 175, 80, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+/* VIDEO PLAYER */
+.video-player-wrapper {
+    width: 100%;
+    margin-bottom: 30px;
+    border-radius: 20px;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.4);
+    aspect-ratio: 16 / 9;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    animation: fadeInUp 0.8s ease-out 0.3s both;
+}
+
+.video-player {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 20px;
+}
+
+/* ICON CIRCLE */
+.meditation-icon {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 30px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 50px;
+    box-shadow: 
+        0 8px 24px rgba(76, 175, 80, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    position: relative;
+    z-index: 1;
+    animation: fadeInUp 0.8s ease-out 0.25s both;
+}
+
+/* MEDITATION INFO  */
+.meditation-info {
+    text-align: center;
+    margin-bottom: 30px;
+    position: relative;
+    z-index: 1;
+    animation: fadeInUp 0.8s ease-out 0.3s both;
+}
+
+.meditation-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    font-family: 'Poppins', sans-serif;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--text-primary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.meditation-subtitle {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.meditation-duration {
+    font-size: 13px;
+    color: var(--text-tertiary);
+}
+
+/* PROGRESS BAR */
+.progress-container {
+    margin-bottom: 30px;
+    position: relative;
+    z-index: 1;
+    animation: fadeInUp 0.8s ease-out 0.35s both;
+}
+
+.progress-bar-wrapper {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 12px;
+    cursor: pointer;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    width: 35%;
+    border-radius: 10px;
+    box-shadow: 0 0 12px rgba(76, 175, 80, 0.4);
+    transition: width 0.1s linear;
+}
+
+.progress-time {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+}
+
+/* CONTROLES */
+.controls-container {
+    position: relative;
+    z-index: 1;
+    animation: fadeInUp 0.8s ease-out 0.4s both;
+}
+
+.play-controls {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 30px;
+    align-items: center;
+}
+
+.control-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(76, 175, 80, 0.15);
+    border: 1.5px solid rgba(76, 175, 80, 0.4);
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.control-btn:hover {
+    background: rgba(76, 175, 80, 0.25);
+    border-color: rgba(76, 175, 80, 0.7);
+    transform: scale(1.1);
+}
+
+.control-btn.play-btn {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    border: none;
+    font-size: 28px;
+    box-shadow: 
+        0 8px 24px rgba(76, 175, 80, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.control-btn.play-btn:hover {
+    background: linear-gradient(135deg, var(--primary-light) 0%, #6FD876 100%);
+    transform: scale(1.05);
+    box-shadow: 
+        0 12px 32px rgba(76, 175, 80, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* CONTROLES DE VELOCIDAD */
+.speed-controls {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 30px;
+}
+
+.speed-btn {
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1.5px solid rgba(76, 175, 80, 0.3);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: 'Poppins', sans-serif;
+}
+
+.speed-btn:hover {
+    background: rgba(76, 175, 80, 0.15);
+    border-color: rgba(76, 175, 80, 0.6);
+}
+
+.speed-btn.active {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    border-color: var(--primary-light);
+    color: white;
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+/* VOLUMEN */
+.volume-control {
+    position: relative;
+    z-index: 1;
+}
+
+.volume-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    display: block;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+}
+
+.volume-slider {
+    width: 100%;
+    height: 6px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+.volume-slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+/* FOOTER */
+.meditation-footer {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid rgba(76, 175, 80, 0.2);
+    animation: fadeInUp 0.8s ease-out 0.5s both;
+}
+
+.footer-logo {
+    font-size: 32px;
+    font-weight: 800;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--text-primary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.back-btn-main {
+    margin-top: 30px;
+    padding: 14px 32px;
+    background: transparent;
+    border: 1.5px solid rgba(76, 175, 80, 0.4);
+    border-radius: 50px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: 'Poppins', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.back-btn-main:hover {
+    border-color: rgba(76, 175, 80, 0.8);
+    background: rgba(76, 175, 80, 0.1);
+    color: var(--primary-light);
+}
+
+/* RESPONSIVO */
+@media (max-width: 480px) {
+    .meditation-container {
+        padding: 16px;
+        max-width: 100%;
+    }
+
+    .player-card {
+        padding: 30px 16px;
+        border-radius: 20px;
+    }
+
+    .meditation-title {
+        font-size: 24px;
+    }
+
+    .meditation-icon {
+        width: 80px;
+        height: 80px;
+        font-size: 40px;
+        margin-bottom: 20px;
+    }
+
+    .control-btn.play-btn {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+    }
+
+    .speed-controls {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .speed-btn {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    .meditation-header {
+        margin-bottom: 20px;
+    }
+
+    .meditation-info {
+        margin-bottom: 20px;
+    }
+
+    .meditation-footer {
+        margin-top: 30px;
+        padding-top: 20px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

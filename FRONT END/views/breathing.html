@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Respiración - LOOP Wellness</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+        crossorigin="anonymous"
+    />
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="../assets/meditation.css">
+</head>
+
+<body>
+    <div class="meditation-container">
+        <div class="player-card">
+            <div class="meditation-header">
+            <div class="header-logo">Respiración - LOOP</div>
+            <button class="header-back" onclick="goBack()" title="Volver">←</button>
+        </div>
+
+            <div class="video-player-wrapper">
+                <iframe 
+                    class="video-player"
+                    src="https://www.youtube.com/watch?v=SPsTo-5UOG8"
+                    title="Ejercicios de Respiración"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+            </div>
+
+            <!-- Icon -->
+            <div class="meditation-icon">🎧</div>
+
+            <!-- Info -->
+            <div class="meditation-info">
+                <h1 class="meditation-title">Tomate un minuto</h1>
+                <p class="meditation-subtitle">Respiración Guiada</p>
+                <p class="meditation-duration">15 minutos de introspección y calma</p>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar-wrapper" onclick="seekVideo(event)">
+                    <div class="progress-bar-fill" id="progressBar"></div>
+                </div>
+                <div class="progress-time">
+                    <span id="currentTime">0:00</span>
+                    <span id="duration">15:00</span>
+                </div>
+            </div>
+
+            <!-- Play Controls -->
+            <div class="controls-container">
+                <div class="play-controls">
+                    <button class="control-btn" onclick="previousTrack()" title="Anterior">⏮</button>
+                    <button class="control-btn play-btn" id="playBtn" onclick="togglePlay()" title="Reproducir/Pausar">▶</button>
+                    <button class="control-btn" onclick="nextTrack()" title="Siguiente">⏭</button>
+                </div>
+
+                <!-- Speed Controls -->
+                <div class="speed-controls">
+                    <button class="speed-btn" onclick="setSpeed(0.75)">0.75x</button>
+                    <button class="speed-btn active" onclick="setSpeed(1)">1x</button>
+                    <button class="speed-btn" onclick="setSpeed(1.25)">1.25x</button>
+                    <button class="speed-btn" onclick="setSpeed(1.5)">1.5x</button>
+                </div>
+
+                <!-- Volume Control -->
+                <div class="volume-control">
+                    <label class="volume-label">Volumen</label>
+                    <input 
+                        type="range" 
+                        class="volume-slider" 
+                        id="volumeSlider"
+                        min="0" 
+                        max="100" 
+                        value="70"
+                        onchange="setVolume(this.value)"
+                    />
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="meditation-footer">
+                <div class="footer-logo">LOOP</div>
+                <button class="back-btn-main" onclick="goBack()">← Atrás</button>
+            </div>
+        </div>
+        </div>
+
+    <!-- Bootstrap JS -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"
+    ></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+        crossorigin="anonymous"
+    ></script>
+
+    <script>
+        /* Añadir despues a un script
+        let isPlaying = false;
+        let currentSpeed = 1;
+        const playBtn = document.getElementById('playBtn');
+        const progressBar = document.getElementById('progressBar');
+        const currentTimeEl = document.getElementById('currentTime');
+        const durationEl = document.getElementById('duration');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const iframe = document.querySelector('.video-player');
+
+        // Reproducción
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            playBtn.textContent = isPlaying ? '⏸' : '▶';
+            playBtn.style.animation = isPlaying ? 'pulse 2s infinite' : 'none';
+            
+            // Aquí puedes agregar lógica para controlar el video de YouTube
+            console.log(isPlaying ? 'Reproduciendo' : 'Pausado');
+        }
+
+        // Pista anterior
+        function previousTrack() {
+            console.log('Pista anterior');
+            // Aquí puedes agregar lógica para cambiar de meditación
+        }
+
+        // Siguiente pista
+        function nextTrack() {
+            console.log('Siguiente pista');
+            // Aquí puedes agregar lógica para cambiar de meditación
+        }
+
+        // Velocidad de reproducción
+        function setSpeed(speed) {
+            currentSpeed = speed;
+            // Actualizar botones activos
+            document.querySelectorAll('.speed-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            console.log(`Velocidad: ${speed}x`);
+        }
+
+        // Volumen
+        function setVolume(value) {
+            console.log(`Volumen: ${value}%`);
+        }
+
+        // Buscar en el video
+        function seekVideo(event) {
+            const rect = event.currentTarget.getBoundingClientRect();
+            const percent = (event.clientX - rect.left) / rect.width;
+            progressBar.style.width = (percent * 100) + '%';
+            console.log(`Buscar a: ${percent * 100}%`);
+        }*/
+
+        // Ir atrás
+        function goBack() {
+            window.location.href = 'home.html';
+        }
+
+        // Simular progreso del video
+        setInterval(() => {
+            if (isPlaying) {
+                const currentPercent = parseFloat(progressBar.style.width) || 0;
+                const newPercent = currentPercent + 0.1;
+                if (newPercent <= 100) {
+                    progressBar.style.width = newPercent + '%';
+                    
+                    // Actualizar tiempo actual (simulado)
+                    const totalSeconds = 25 * 60;
+                    const currentSeconds = Math.floor((newPercent / 100) * totalSeconds);
+                    currentTimeEl.textContent = formatTime(currentSeconds);
+                } else {
+                    // Fin del video
+                    isPlaying = false;
+                    playBtn.textContent = '▶';
+                    playBtn.style.animation = 'none';
+                    progressBar.style.width = '0%';
+                    currentTimeEl.textContent = '0:00';
+                }
+            }
+        }, 100);
+
+        // Formatear tiempo
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', () => {
+            durationEl.textContent = '25:00';
+            console.log('Reproductor de meditación listo');
+        });
+
+    </script>
+</body>
+</html>
