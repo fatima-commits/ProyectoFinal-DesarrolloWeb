@@ -351,6 +351,7 @@ body::after {
     cursor: pointer;
     transition: var(--transition);
     font-family: 'Poppins', sans-serif;
+    margin-top: 10px;
 }
 
 .start-btn:hover {
