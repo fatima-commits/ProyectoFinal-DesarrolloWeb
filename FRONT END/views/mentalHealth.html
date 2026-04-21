@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <title>Agenda de Salud Mental - LOOP Wellness</title>
+    <title>Agenda - LOOP Wellness</title>
 
     <!-- Bootstrap CSS -->
     <link
@@ -20,22 +20,15 @@
 </head>
 
 <body>
-    <div class="container-wrapper">
-        <!-- Header Banner -->
-        <div class="header-banner">
-            <div class="banner-content">
-                <h1 class="banner-title">¡Bienvenido a tu agenda<br>de Salud Mental!</h1>
-                <p class="banner-subtitle">Hecho personalmente para ayudarte.</p>
-            </div>
+    <div class="meditation-container">
+        <div class="player-card">
+            <div class="meditation-header">
+            <div class="header-logo">Agenda de Salud Mental</div>
+            <button class="header-back" onclick="goBack()" title="Volver">←</button>
         </div>
+        
+        <h3 class="banner-subtitle">¿Con qué te podemos ayudar?</h3>
 
-        <!-- Section Header with Close -->
-        <div class="header-top">
-            <h2 class="header-title">¿Con qué te podemos ayudar?</h2>
-            <button class="btn-close-custom" onclick="alert('Cerrar programa')">✕</button>
-        </div>
-
-        <!-- Cards Grid -->
         <div class="cards-grid">
             <div class="card-item">
                 <div class="card-image img-1">
@@ -43,7 +36,7 @@
                 </div>
                 <div class="card-content">
                     <div>
-                        <h3 class="card-title">Meditación Guiada</h3>
+                        <a href="meditation.html"><h3 class="card-title">Meditación Guiada</h3></a>
                         <p class="card-subtitle">Mindfulness y Relajación</p>
                         <p class="card-description">Calma tu mente y reduce estres con sesiones de meditación guiada hechas para tus necesidades.</p>
                     </div>
@@ -57,7 +50,7 @@
                 </div>
                 <div class="card-content">
                     <div>
-                        <h3 class="card-title">Ejercicios de Respiración</h3>
+                        <a href="breathing.html"><h3 class="card-title">Ejercicios de Respiración</h3></a>
                         <p class="card-subtitle">Bienestar Respiratorio</p>
                         <p class="card-description">Domina técnicas de respiración para mejorar la concentración, energía y balance emocional a lo largo de tu día.</p>
                     </div>
@@ -71,7 +64,7 @@
                 </div>
                 <div class="card-content">
                     <div>
-                        <h3 class="card-title">Recetas Saludables</h3>
+                        <a href="recipes.html"><h3 class="card-title">Recetas Saludables</h3></a>
                         <p class="card-subtitle">Nutrición y Bienestar</p>
                         <p class="card-description">Descubre recetas nutritivas y deliciosas diseñadas para impulsar tu cuerpo y apoyar tus metas de bienestar.</p>
                     </div>
@@ -85,7 +78,7 @@
                 </div>
                 <div class="card-content">
                     <div>
-                        <h3 class="card-title">Clases de Yoga</h3>
+                        <a href="classes.html"><h3 class="card-title">Clases de Yoga</h3></a>
                         <p class="card-subtitle">Fuerza y Flexibilidad</p>
                         <p class="card-description">Únete a clases dinámicas de yoga para construir fuerza, flexibilidad y paz interior en solo algunos minutos al día.</p>
                     </div>
@@ -93,7 +86,14 @@
                 </div>
             </div>
         </div>
-    </div>
+
+            <!-- Footer -->
+            <div class="meditation-footer">
+                <div class="footer-logo">LOOP</div>
+                <button class="back-btn-main" onclick="goBack()">← Atrás</button>
+            </div>
+        </div>
+        </div>
 
     <!-- Bootstrap JS -->
     <script

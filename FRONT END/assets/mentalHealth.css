@@ -4,8 +4,6 @@
     --primary-color: #4CAF50;
     --primary-light: #5FCC69;
     --primary-dark: #388E3C;
-    --secondary-color: #7C3AED;
-    --secondary-light: #A78BFA;
     --bg-dark: #0D0D0D;
     --bg-darker: #0A0A0A;
     --bg-card: rgba(20, 20, 20, 0.85);
@@ -45,36 +43,6 @@ body {
     position: relative;
     overflow-x: hidden;
     overflow-y: auto;
-}
-
-/* ==================== FONDO ANIMADO ==================== */
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-        radial-gradient(circle at 20% 30%, rgba(76, 175, 80, 0.08) 0%, transparent 50%),
-        radial-gradient(circle at 80% 70%, rgba(124, 58, 237, 0.05) 0%, transparent 50%),
-        radial-gradient(circle at 50% 100%, rgba(76, 175, 80, 0.03) 0%, transparent 70%);
-    z-index: -2;
-    animation: gradientShift 15s ease infinite;
-    pointer-events: none;
-}
-
-body::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200"><defs><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" seed="2" /></filter></defs><rect width="1200" height="1200" fill="rgba(255,255,255,0.01)" filter="url(%23noise)"/></svg>');
-    z-index: -1;
-    pointer-events: none;
 }
 
 @keyframes gradientShift {
@@ -135,7 +103,7 @@ body::after {
     50% { transform: translateY(-15px); }
 }
 
-/* ==================== CONTENEDOR PRINCIPAL ==================== */
+/* CONTENEDOR PRINCIPAL */
 .container-wrapper {
     width: 100%;
     max-width: 450px;
@@ -147,81 +115,14 @@ body::after {
     background: transparent;
 }
 
-/* ==================== HEADER BANNER ==================== */
-.header-banner {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-    border-radius: 0 0 28px 28px;
-    padding: 40px 30px;
-    margin-bottom: 0;
-    position: relative;
-    overflow: hidden;
-    animation: slideDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-    backdrop-filter: blur(30px);
-    box-shadow: 
-        0 8px 32px rgba(76, 175, 80, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
-
-.header-banner::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -50%;
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-    border-radius: 50%;
-    animation: float 8s ease-in-out infinite;
-    pointer-events: none;
-}
-
-.header-banner::after {
-    content: '';
-    position: absolute;
-    bottom: -30%;
-    left: -30%;
-    width: 300px;
-    height: 300px;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
-    border-radius: 50%;
-    pointer-events: none;
-}
-
-.banner-content {
-    position: relative;
-    z-index: 1;
-    text-align: center;
-}
-
-.banner-title {
-    font-size: 32px;
-    font-weight: 800;
-    margin-bottom: 12px;
-    font-family: 'Poppins', sans-serif;
-    letter-spacing: -1px;
-    animation: fadeInUp 0.8s ease-out 0.2s both;
-    line-height: 1.2;
-}
-
+/* HEADER BANNER */
 .banner-subtitle {
     font-size: 15px;
     font-weight: 400;
     opacity: 0.95;
     animation: fadeInUp 0.8s ease-out 0.3s both;
     line-height: 1.5;
-}
-
-/* ==================== HEADER TOP ==================== */
-.header-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 24px 20px;
-    margin-bottom: 0;
-    animation: slideDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-    background: rgba(20, 20, 20, 0.5);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(76, 175, 80, 0.1);
+    font-family: 'Poppins', sans-serif;
 }
 
 .header-title {
@@ -231,30 +132,7 @@ body::after {
     color: var(--text-primary);
 }
 
-.btn-close-custom {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: rgba(76, 175, 80, 0.15);
-    border: 1.5px solid rgba(76, 175, 80, 0.4);
-    color: var(--text-primary);
-    font-size: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: var(--transition);
-    font-weight: 300;
-    line-height: 1;
-}
-
-.btn-close-custom:hover {
-    background: rgba(76, 175, 80, 0.25);
-    border-color: rgba(76, 175, 80, 0.6);
-    transform: rotate(90deg);
-}
-
-/* ==================== SECTION TITLE ==================== */
+/* TITULO SECCION */
 .section-title {
     font-size: 24px;
     font-weight: 700;
@@ -264,7 +142,7 @@ body::after {
     animation: fadeInUp 0.8s ease-out 0.2s both;
 }
 
-/* ==================== GRID DE TARJETAS ==================== */
+/* GRID DE TARJETAS */
 .cards-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -306,7 +184,7 @@ body::after {
         inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-/* ==================== CARD IMAGE ==================== */
+/* CARD IMAGE */
 .card-image {
     width: 100%;
     height: 180px;
@@ -336,7 +214,7 @@ body::after {
     background: linear-gradient(135deg, #66BB6A 0%, #5FCC69 100%);
 }
 
-/* ==================== CARD CONTENT ==================== */
+/* CARD CONTENT */
 .card-content {
     flex: 1;
     padding: 20px;
@@ -383,7 +261,7 @@ body::after {
     margin-top: auto;
 }
 
-/* ==================== RESPONSIVE ==================== */
+/* RESPONSIVE */
 @media (max-width: 480px) {
     .container-wrapper {
         max-width: 100%;
@@ -458,4 +336,151 @@ body::after {
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
+}
+
+/*  FONDO ANIMADO */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('Fondo.jpeg');
+    z-index: -2;
+    animation: gradientShift 15s ease infinite;
+    pointer-events: none;
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('Fondo.jpeg');
+    z-index: -1;
+    pointer-events: none;
+    animation: float 20s ease-in-out infinite;
+}
+
+/* CONTENEDOR PRINCIPAL */
+.meditation-container {
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: slideUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    opacity: 95%;
+}
+
+/* HEADER */
+.meditation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    animation: fadeInUp 0.8s ease-out 0.1s both;
+}
+
+.header-logo {
+    font-size: 24px;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-primary);
+}
+
+.header-back {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(76, 175, 80, 0.15);
+    border: 1.5px solid rgba(76, 175, 80, 0.4);
+    color: var(--text-primary);
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.header-back:hover {
+    background: rgba(76, 175, 80, 0.25);
+    border-color: rgba(76, 175, 80, 0.6);
+    transform: rotate(-90deg);
+}
+
+/*  CARD */
+.player-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(30px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 28px;
+    padding: 40px 24px;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 0 80px rgba(76, 175, 80, 0.05);
+    position: relative;
+    overflow: hidden;
+    animation: scaleIn 0.8s ease-out 0.2s both;
+}
+
+.player-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(76, 175, 80, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+/* FOOTER */
+.meditation-footer {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid rgba(76, 175, 80, 0.2);
+    animation: fadeInUp 0.8s ease-out 0.5s both;
+}
+
+.footer-logo {
+    font-size: 32px;
+    font-weight: 800;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--text-primary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.back-btn-main {
+    margin-top: 30px;
+    padding: 14px 32px;
+    background: transparent;
+    border: 1.5px solid rgba(76, 175, 80, 0.4);
+    border-radius: 50px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: 'Poppins', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.back-btn-main:hover {
+    border-color: rgba(76, 175, 80, 0.8);
+    background: rgba(76, 175, 80, 0.1);
+    color: var(--primary-light);
 }
