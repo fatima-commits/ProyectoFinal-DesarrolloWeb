@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Clases de Yoga - LOOP Wellness</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+        crossorigin="anonymous"
+    />
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="../assets/classes.css">
+    <link rel="stylesheet" href="../assets/meditation.css">
+</head>
+
+<body>
+    <div class="meditation-container">
+        <div class="player-card">
+            <div class="meditation-header">
+                <div class="header-logo">Clases de Yoga - LOOP</div>
+                <button class="header-back" onclick="goBack()" title="Volver">←</button>
+            </div>
+ 
+        <!-- Filtros -->
+        <div class="filters-wrapper">
+            <div class="filters-container">
+                <button class="filter-btn active">Todo</button>
+                <button class="filter-btn">Cuerpo completo</button>
+                <button class="filter-btn">Tren superior</button>
+                <button class="filter-btn">Tren inferior</button>
+            </div>
+        </div> <br>
+ 
+        <!-- Yoga Classes Grid -->
+        <div class="yoga-grid">
+            <!-- Class 1: Full Body -->
+            <div class="yoga-card">
+                <div class="yoga-card-background type-full">
+                    🧘‍♀️
+                </div>
+                <div class="yoga-card-content">
+                    <div class="yoga-card-header">
+                        <div class="instructor-avatar">👩</div>
+                        <div class="yoga-info">
+                            <h3 class="yoga-title">Chrissy Byrne</h3>
+                            <p class="yoga-type">Yoga Life</p>
+                        </div>
+                    </div>
+                    <div class="yoga-level">Full Body<br>Yoga</div>
+                    <div class="yoga-footer">
+                        <button class="start-btn">Start</button>
+                        <span class="duration-badge type-full">45 min</span>
+                    </div>
+                </div>
+            </div>
+ 
+            <!-- Class 2: Lower Body -->
+            <div class="yoga-card">
+                <div class="yoga-card-background type-lower">
+                    🧘‍♀️
+                </div>
+                <div class="yoga-card-content">
+                    <div class="yoga-card-header">
+                        <div class="instructor-avatar">👱‍♀️</div>
+                        <div class="yoga-info">
+                            <h3 class="yoga-title">Nataliiya Byrne</h3>
+                            <p class="yoga-type">Yoga Life</p>
+                        </div>
+                    </div>
+                    <div class="yoga-level">Lower Body<br>Yoga</div>
+                    <div class="yoga-footer">
+                        <button class="start-btn">Start</button>
+                        <span class="duration-badge type-lower">30 min</span>
+                    </div>
+                </div>
+            </div>
+ 
+            <!-- Class 3: Upper Body -->
+            <div class="yoga-card">
+                <div class="yoga-card-background type-upper">
+                    🧘
+                </div>
+                <div class="yoga-card-content">
+                    <div class="yoga-card-header">
+                        <div class="instructor-avatar">👩‍🦰</div>
+                        <div class="yoga-info">
+                            <h3 class="yoga-title">Sophia Ami</h3>
+                            <p class="yoga-type">Yoga Life</p>
+                        </div>
+                    </div>
+                    <div class="yoga-level">Upper Body<br>Yoga</div>
+                    <div class="yoga-footer">
+                        <button class="start-btn">Start</button>
+                        <span class="duration-badge type-upper">25 min</span>
+                    </div>
+                </div>
+            </div>
+ 
+            <!-- Class 4: Full Body Strength -->
+            <div class="yoga-card">
+                <div class="yoga-card-background type-full">
+                    🤸‍♀️
+                </div>
+                <div class="yoga-card-content">
+                    <div class="yoga-card-header">
+                        <div class="instructor-avatar">👩‍🎤</div>
+                        <div class="yoga-info">
+                            <h3 class="yoga-title">Emma Wilson</h3>
+                            <p class="yoga-type">Yoga Life</p>
+                        </div>
+                    </div>
+                    <div class="yoga-level">Full Body<br>Strength</div>
+                    <div class="yoga-footer">
+                        <button class="start-btn">Start</button>
+                        <span class="duration-badge type-full">50 min</span>
+                    </div>
+                </div>
+            </div>
+ 
+            <!-- Class 5: Flexibility -->
+            <div class="yoga-card">
+                <div class="yoga-card-background type-lower">
+                    🧘‍♀️
+                </div>
+                <div class="yoga-card-content">
+                    <div class="yoga-card-header">
+                        <div class="instructor-avatar">🧑‍🦱</div>
+                        <div class="yoga-info">
+                            <h3 class="yoga-title">Marcus Johnson</h3>
+                            <p class="yoga-type">Yoga Life</p>
+                        </div>
+                    </div>
+                    <div class="yoga-level">Flexibility<br>Training</div>
+                    <div class="yoga-footer">
+                        <button class="start-btn">Start</button>
+                        <span class="duration-badge type-lower">35 min</span>
+                    </div>
+                </div>
+            </div>
+ 
+            <!-- Class 6: Morning Flow -->
+            <div class="yoga-card">
+                <div class="yoga-card-background type-upper">
+                    🌅
+                </div>
+                <div class="yoga-card-content">
+                    <div class="yoga-card-header">
+                        <div class="instructor-avatar">👩‍💻</div>
+                        <div class="yoga-info">
+                            <h3 class="yoga-title">Lisa Chen</h3>
+                            <p class="yoga-type">Yoga Life</p>
+                        </div>
+                    </div>
+                    <div class="yoga-level">Morning<br>Flow Yoga</div>
+                    <div class="yoga-footer">
+                        <button class="start-btn">Start</button>
+                        <span class="duration-badge type-upper">20 min</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        </div>
+    </div>
+</body>
+
+    <!-- Bootstrap JS -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"
+    ></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+        crossorigin="anonymous"
+    ></script>
+
+    <!-- Custom Script -->
+    <script>
+        // Filtros
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Botón atrás
+        document.querySelector('.back-btn').addEventListener('click', function() {
+            window.history.back();
+        });
+
+        // Botón Start
+        document.querySelectorAll('.start-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('¡Iniciando clase de yoga!');
+            });
+        });
+
+        // Cards clickeables
+        document.querySelectorAll('.yoga-card').forEach(card => {
+            card.addEventListener('click', function() {
+                console.log('Tarjeta de yoga clickeada');
+            });
+        });
+    </script>
+</body>
+</html>
