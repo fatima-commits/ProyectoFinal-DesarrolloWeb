@@ -538,3 +538,37 @@ body::after {
         transition-duration: 0.01ms !important;
     }
 }
+
+.breathing-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+/* Círculo de respiración */
+.breathing-circle {
+    width: 150px;
+    height: 150px;
+    background: rgba(76, 175, 80, 0.8);
+    border-radius: 50%;
+    transition: opacity 0.3s ease;
+    opacity: 0;
+    transform: scale(1);
+}
+
+/* Animación (expandir / contraer) */
+@keyframes breathe {
+    0% { transform: scale(0.9); }
+    50% { transform: scale(1.4); }
+    100% { transform: scale(0.9); }
+}
+
+.breathing-active {
+    animation: breathe 6s ease-in-out infinite;
+    opacity: 1;
+}
+
+.meditation-icon:hover{
+    cursor: pointer;
+}

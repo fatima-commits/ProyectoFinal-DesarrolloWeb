@@ -27,26 +27,20 @@
             <button class="header-back" onclick="goBack()" title="Volver">←</button>
         </div>
 
-            <div class="video-player-wrapper">
-                <iframe 
-                    class="video-player"
-                    src="https://www.youtube.com/watch?v=SPsTo-5UOG8"
-                    title="Ejercicios de Respiración"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen>
-                </iframe>
-            </div>
-
-            <!-- Icon -->
-            <div class="meditation-icon">🎧</div>
-
-            <!-- Info -->
+        <!-- Info -->
             <div class="meditation-info">
                 <h1 class="meditation-title">Tomate un minuto</h1>
                 <p class="meditation-subtitle">Respiración Guiada</p>
                 <p class="meditation-duration">15 minutos de introspección y calma</p>
+            </div> <br>
+
+            <!-- Icono + círculo animado -->
+            <div class="breathing-wrapper">
+                <!-- Círculo animado -->
+                <div class="breathing-circle meditation-icon" id="breathingCircle" onclick="toggleBreathing()"></div>
             </div>
 
+            <br> <br>
             <!-- Progress Bar -->
             <div class="progress-container">
                 <div class="progress-bar-wrapper" onclick="seekVideo(event)">
@@ -110,62 +104,6 @@
     ></script>
 
     <script>
-        /* Añadir despues a un script
-        let isPlaying = false;
-        let currentSpeed = 1;
-        const playBtn = document.getElementById('playBtn');
-        const progressBar = document.getElementById('progressBar');
-        const currentTimeEl = document.getElementById('currentTime');
-        const durationEl = document.getElementById('duration');
-        const volumeSlider = document.getElementById('volumeSlider');
-        const iframe = document.querySelector('.video-player');
-
-        // Reproducción
-        function togglePlay() {
-            isPlaying = !isPlaying;
-            playBtn.textContent = isPlaying ? '⏸' : '▶';
-            playBtn.style.animation = isPlaying ? 'pulse 2s infinite' : 'none';
-            
-            // Aquí puedes agregar lógica para controlar el video de YouTube
-            console.log(isPlaying ? 'Reproduciendo' : 'Pausado');
-        }
-
-        // Pista anterior
-        function previousTrack() {
-            console.log('Pista anterior');
-            // Aquí puedes agregar lógica para cambiar de meditación
-        }
-
-        // Siguiente pista
-        function nextTrack() {
-            console.log('Siguiente pista');
-            // Aquí puedes agregar lógica para cambiar de meditación
-        }
-
-        // Velocidad de reproducción
-        function setSpeed(speed) {
-            currentSpeed = speed;
-            // Actualizar botones activos
-            document.querySelectorAll('.speed-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            console.log(`Velocidad: ${speed}x`);
-        }
-
-        // Volumen
-        function setVolume(value) {
-            console.log(`Volumen: ${value}%`);
-        }
-
-        // Buscar en el video
-        function seekVideo(event) {
-            const rect = event.currentTarget.getBoundingClientRect();
-            const percent = (event.clientX - rect.left) / rect.width;
-            progressBar.style.width = (percent * 100) + '%';
-            console.log(`Buscar a: ${percent * 100}%`);
-        }*/
-
         // Ir atrás
         function goBack() {
             window.location.href = 'home.html';
@@ -207,6 +145,19 @@
             console.log('Reproductor de meditación listo');
         });
 
+        let isBreathing = false;
+
+        function toggleBreathing() {
+            const circle = document.getElementById("breathingCircle");
+
+            isBreathing = !isBreathing;
+
+            if (isBreathing) {
+                circle.classList.add("breathing-active");
+            } else {
+                circle.classList.remove("breathing-active");
+            }
+        }
     </script>
 </body>
 </html>
