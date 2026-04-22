@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Habit Tracker - LOOP Wellness</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+        crossorigin="anonymous"
+    />
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="../assets/habits.css">
+</head>
+
+<body>
+    <div class="habits-container">
+        <div id="all-habits-screen" class="screen-wrapper" style="display: flex; flex-direction: column;">
+            <div class="habits-header">
+                <h2 class="header-title">Todos los hábitos</h2>
+                <span class="header-action">Mi perfil</span>
+            </div>
+
+            <div class="filters-container">
+                <button class="filter-btn active">Todos los días</button>
+                <button class="filter-btn">Lun</button>
+                <button class="filter-btn">Mar</button>
+                <button class="filter-btn">Mie</button>
+                <button class="filter-btn">Jue</button>
+                <button class="filter-btn">Vie</button>
+            </div>
+
+            <div class="habits-list">
+                <div class="habit-card orange-bg">
+                    <div class="habit-card-header">
+                        <span class="habit-card-icon">😊</span>
+                    </div>
+                    <div class="habit-card-content">
+                        <h3 class="habit-card-title">Tomar vitaminas</h3>
+                        <p class="habit-card-subtitle">Después de, lavarme los dientes</p>
+                    </div>
+                    <div class="habit-card-days">
+                        <span class="day-active">L</span>
+                        <span class="day-active">M</span>
+                        <span>M</span>
+                        <span>J</span>
+                        <span>V</span>
+                    </div>
+                </div>
+
+                <!-- Habit 2 -->
+                <div class="habit-card purple-bg">
+                    <div class="habit-card-header">
+                        <span class="habit-card-icon">📖</span>
+                    </div>
+                    <div class="habit-card-content">
+                        <h3 class="habit-card-title">Leer 50 páginas</h3>
+                        <p class="habit-card-subtitle">Después de cenar</p>
+                    </div>
+                    <div class="habit-card-days">
+                        <span class="day-active">L</span>
+                        <span>M</span>
+                        <span class="day-active">M</span>
+                        <span>J</span>
+                        <span class="day-active">V</span>
+                    </div>
+                </div>
+
+                <!-- Habit 3 -->
+                <div class="habit-card pink-bg">
+                    <div class="habit-card-header">
+                        <span class="habit-card-icon">🚿</span>
+                    </div>
+                    <div class="habit-card-content">
+                        <h3 class="habit-card-title">Bañarme</h3>
+                        <p class="habit-card-subtitle">Despues de hacer mi skincare</p>
+                    </div>
+                    <div class="habit-card-days">
+                        <span>L</span>
+                        <span class="day-active">M</span>
+                        <span class="day-active">M</span>
+                        <span class="day-active">J</span>
+                        <span>V</span>
+                    </div>
+                </div>
+
+                <!-- Habit 4 -->
+                <div class="habit-card cyan-bg">
+                    <div class="habit-card-header">
+                        <span class="habit-card-icon">🚴</span>
+                    </div>
+                    <div class="habit-card-content">
+                        <h3 class="habit-card-title">Salir a la vía recreativa</h3>
+                        <p class="habit-card-subtitle">Después de desayunar</p>
+                    </div>
+                    <div class="habit-card-days">
+                        <span class="day-active">L</span>
+                        <span>M</span>
+                        <span>M</span>
+                        <span class="day-active">J</span>
+                        <span class="day-active">V</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottom-nav">
+                <a class="nav-item active">
+                    <span class="nav-icon">🏠</span>
+                    <span>Hoy</span>
+                </a>
+                <a class="nav-item" onclick="switchScreen('new-habit')">
+                    <span class="nav-icon">➕</span>
+                    <span>Añadir</span>
+                </a>
+                <a class="nav-item">
+                    <span class="nav-icon">✓</span>
+                    <span>Todos los hábitos</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- PANTALLA HÁBITOS ACTUALES, NO FUNCIONAL AUN -->
+        <div id="current-habits-screen" class="screen-wrapper" style="display: none; flex-direction: column;">
+            <div class="habits-header">
+                <h2 class="header-title">Hábitos pendientes</h2>
+                <span class="header-action">Mi perfil</span>
+            </div>
+
+            <div class="habits-list">
+                <div style="text-align: center; margin-bottom: 24px; padding: 0 16px; animation: fadeInUp 0.8s ease-out;">
+                    <div style="font-size: 20px; margin-bottom: 8px; font-weight: 700;">¡Lo estás haciendo bien!😊</div>
+                    <p style="color: var(--text-tertiary); font-size: 13px; margin: 0;">Hábitos pendientes</p>
+                </div>
+
+                <!-- Completed Section -->
+                <div style="padding: 24px 16px 0 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); margin: 24px 16px 0 16px;">
+                    <p style="color: var(--text-secondary); font-size: 13px; margin: 0; font-weight: 600;">Completed habits</p>
+                </div>
+
+                <div class="habit-card pink-bg" style="opacity: 0.7; margin-top: 12px;">
+                    <div class="habit-card-header">
+                        <span class="habit-card-icon">🚿</span>
+                    </div>
+                    <div class="habit-card-content">
+                        <h3 class="habit-card-title">Bañarme</h3>
+                        <p class="habit-card-subtitle">Después de ir al gym</p>
+                    </div>
+                    <div style="text-align: right; padding: 8px 16px; font-size: 20px; color: rgba(255, 255, 255, 0.7);">✓</div>
+                </div>
+            </div>
+
+            <div class="bottom-nav">
+                <a class="nav-item active">
+                    <span class="nav-icon">🏠</span>
+                    <span>Today</span>
+                </a>
+                <a class="nav-item" onclick="switchScreen('new-habit')">
+                    <span class="nav-icon">➕</span>
+                    <span>Create new</span>
+                </a>
+                <a class="nav-item">
+                    <span class="nav-icon">✓</span>
+                    <span>All habits</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+            <div class="meditation-footer">
+                <div class="footer-logo">LOOP</div>
+                <button class="back-btn-main" onclick="goBack()">← Atrás</button>
+            </div>
+        </div>
+
+        <!-- PANTALLA NUEVO HÁBITO -->
+        <div id="new-habit-screen" class="screen-wrapper" style="display: none; flex-direction: column;">
+            <div class="new-habit-form">
+                <div class="form-header">
+                    <button class="form-back" onclick="switchScreen('all-habits')">‹</button>
+                    <h2 class="form-title">Nuevo hábito</h2>
+                    <button class="cancel-btn" onclick="switchScreen('all-habits')">Cancelar</button>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Despues de</label>
+                    <input type="text" class="form-input" placeholder="lavarme los dientes" value="lavarme los dientes">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Voy a</label>
+                    <input type="text" class="form-input" placeholder="salir a caminar" value="salir a caminar">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Selecciona en que días recordar</label>
+                    <div class="option-group">
+                        <button class="option-btn active">Todos los días</button>
+                        <button class="option-btn">Lun</button>
+                        <button class="option-btn active">Mar</button>
+                        <button class="option-btn">Mie</button>
+                        <button class="option-btn">Jue</button>
+                        <button class="option-btn">Vie</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Selecciona el color de tu hábito</label>
+                    <div class="color-picker">
+                        <div class="color-dot orange active"></div>
+                        <div class="color-dot pink"></div>
+                        <div class="color-dot purple"></div>
+                        <div class="color-dot cyan"></div>
+                    </div>
+                </div>
+
+                <button class="create-habit-btn" onclick="switchScreen('all-habits')">Crear nuevo hábito</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"
+    ></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+        crossorigin="anonymous"
+    ></script>
+
+    <script>
+        function goBack() {
+            window.location.href = 'home.html';
+        }
+
+        function switchScreen(screenId) {
+            document.querySelectorAll('.welcome-screen, .screen-wrapper').forEach(screen => {
+                screen.style.display = 'none';
+            });
+
+            const selectedScreen = document.getElementById(screenId + '-screen');
+            if (selectedScreen) {
+                selectedScreen.style.display = 'flex';
+            }
+        }
+
+        // Filtros
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Opciones
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+        });
+
+        // Colores
+        document.querySelectorAll('.color-dot').forEach(dot => {
+            dot.addEventListener('click', function() {
+                document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Nav
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

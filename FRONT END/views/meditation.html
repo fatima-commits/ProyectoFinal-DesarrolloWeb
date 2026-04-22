@@ -110,7 +110,9 @@
     ></script>
 
     <script>
-        /* Añadir despues a un script
+        // Añadir despues a un script
+        //Las funciones para simular el tiempo se le pidieron a Chat.
+        //En el backend despues hay que cambiarlo para implementarlo bien.
         let isPlaying = false;
         let currentSpeed = 1;
         const playBtn = document.getElementById('playBtn');
@@ -164,7 +166,7 @@
             const percent = (event.clientX - rect.left) / rect.width;
             progressBar.style.width = (percent * 100) + '%';
             console.log(`Buscar a: ${percent * 100}%`);
-        }*/
+        }
 
         // Ir atrás
         function goBack() {
