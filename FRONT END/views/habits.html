@@ -21,6 +21,7 @@
 
 <body>
     <div class="habits-container">
+        <!-- PANTALLA TODOS LOS HÁBITOS -->
         <div id="all-habits-screen" class="screen-wrapper" style="display: flex; flex-direction: column;">
             <div class="habits-header">
                 <h2 class="header-title">Todos los hábitos</h2>
@@ -116,62 +117,15 @@
                 </a>
                 <a class="nav-item" onclick="switchScreen('new-habit')">
                     <span class="nav-icon">➕</span>
-                    <span>Añadir</span>
+                    <span>Crear nuevo</span>
                 </a>
                 <a class="nav-item">
                     <span class="nav-icon">✓</span>
                     <span>Todos los hábitos</span>
                 </a>
             </div>
-        </div>
 
-        <!-- PANTALLA HÁBITOS ACTUALES, NO FUNCIONAL AUN -->
-        <div id="current-habits-screen" class="screen-wrapper" style="display: none; flex-direction: column;">
-            <div class="habits-header">
-                <h2 class="header-title">Hábitos pendientes</h2>
-                <span class="header-action">Mi perfil</span>
-            </div>
-
-            <div class="habits-list">
-                <div style="text-align: center; margin-bottom: 24px; padding: 0 16px; animation: fadeInUp 0.8s ease-out;">
-                    <div style="font-size: 20px; margin-bottom: 8px; font-weight: 700;">¡Lo estás haciendo bien!😊</div>
-                    <p style="color: var(--text-tertiary); font-size: 13px; margin: 0;">Hábitos pendientes</p>
-                </div>
-
-                <!-- Completed Section -->
-                <div style="padding: 24px 16px 0 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); margin: 24px 16px 0 16px;">
-                    <p style="color: var(--text-secondary); font-size: 13px; margin: 0; font-weight: 600;">Completed habits</p>
-                </div>
-
-                <div class="habit-card pink-bg" style="opacity: 0.7; margin-top: 12px;">
-                    <div class="habit-card-header">
-                        <span class="habit-card-icon">🚿</span>
-                    </div>
-                    <div class="habit-card-content">
-                        <h3 class="habit-card-title">Bañarme</h3>
-                        <p class="habit-card-subtitle">Después de ir al gym</p>
-                    </div>
-                    <div style="text-align: right; padding: 8px 16px; font-size: 20px; color: rgba(255, 255, 255, 0.7);">✓</div>
-                </div>
-            </div>
-
-            <div class="bottom-nav">
-                <a class="nav-item active">
-                    <span class="nav-icon">🏠</span>
-                    <span>Today</span>
-                </a>
-                <a class="nav-item" onclick="switchScreen('new-habit')">
-                    <span class="nav-icon">➕</span>
-                    <span>Create new</span>
-                </a>
-                <a class="nav-item">
-                    <span class="nav-icon">✓</span>
-                    <span>All habits</span>
-                </a>
-            </div>
-        </div>
-
-        <!-- Footer -->
+            <!-- Footer -->
             <div class="meditation-footer">
                 <div class="footer-logo">LOOP</div>
                 <button class="back-btn-main" onclick="goBack()">← Atrás</button>
@@ -236,13 +190,14 @@
         crossorigin="anonymous"
     ></script>
 
+    <!-- Custom Script -->
     <script>
         function goBack() {
             window.location.href = 'home.html';
         }
 
         function switchScreen(screenId) {
-            document.querySelectorAll('.welcome-screen, .screen-wrapper').forEach(screen => {
+            document.querySelectorAll('.screen-wrapper').forEach(screen => {
                 screen.style.display = 'none';
             });
 

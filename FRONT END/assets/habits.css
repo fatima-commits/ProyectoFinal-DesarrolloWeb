@@ -689,6 +689,7 @@ body {
     font-family: 'Poppins', sans-serif;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    margin-bottom: 20px;
 }
 
 .back-btn-main:hover {
