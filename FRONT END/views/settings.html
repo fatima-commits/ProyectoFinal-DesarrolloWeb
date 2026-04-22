@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <title>Settings</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles_settings.css">
+</head>
+<body>
+
+    <div class="bg-overlay"></div>
+
+    <div class="page">
+
+        <!-- Header -->
+        <header class="header">
+            <p class="page-label">Settings</p>
+            <h1 class="main-title">Your profile</h1>
+        </header>
+
+        <!-- Foto + nombre -->
+        <div class="profile-section">
+            <div class="avatar-wrapper" id="avatarWrapper">
+                <img src="" alt="Foto" class="avatar-img" id="avatarImg" style="display:none">
+                <span class="avatar-placeholder" id="avatarPlaceholder">👤</span>
+                <label class="avatar-edit-btn" for="photoInput">📷</label>
+                <input type="file" id="photoInput" accept="image/*" style="display:none">
+            </div>
+            <div class="name-wrapper">
+                <input type="text" class="name-input" id="nameInput" value="Mariana Anguiano">
+                <span class="field-hint">Tap to edit</span>
+            </div>
+        </div>
+
+        <!-- Secciones de campos -->
+        <div class="settings-list">
+
+            <!-- Cuerpo -->
+            <div class="settings-group">
+                <p class="group-label">Body</p>
+                <div class="field-row">
+                    <span class="field-icon">⚖️</span>
+                    <div class="field-content">
+                        <label class="field-label">Weight</label>
+                        <div class="field-input-row">
+                            <input type="number" class="field-input" id="pesoInput" value="60">
+                            <span class="field-unit">kg</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="divider"></div>
+                <div class="field-row">
+                    <span class="field-icon">📏</span>
+                    <div class="field-content">
+                        <label class="field-label">Height</label>
+                        <div class="field-input-row">
+                            <input type="number" class="field-input" id="alturaInput" value="161">
+                            <span class="field-unit">cm</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cuenta -->
+            <div class="settings-group">
+                <p class="group-label">Cuenta</p>
+                <div class="field-row">
+                    <span class="field-icon">✉️</span>
+                    <div class="field-content">
+                        <label class="field-label">Email</label>
+                        <input type="email" class="field-input full" id="emailInput" value="manguiano@gmail.com">
+                    </div>
+                </div>
+                <div class="divider"></div>
+                <div class="field-row">
+                    <span class="field-icon">🔒</span>
+                    <div class="field-content">
+                        <label class="field-label">Password</label>
+                        <div class="field-input-row">
+                            <input type="text" class="field-input full" id="passInput" value="MaRiAn4;">
+                            <button class="toggle-pass" id="togglePass">👁</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Botón guardar -->
+        <button class="save-btn" id="saveBtn">Guardar cambios</button>
+
+        <!-- Mensaje de confirmación -->
+        <p class="save-msg" id="saveMsg" style="display:none">✅ Cambios guardados</p>
+
+        <!-- Volver -->
+        <button class="back-home-btn" onclick="window.location.href='home.html'">← Home</button>
+
+    </div>
+</body>
+</html>

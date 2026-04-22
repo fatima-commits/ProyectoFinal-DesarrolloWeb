@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <title>Journal</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles_diario.css">
+</head>
+<body>
+
+    <div class="bg-overlay"></div>
+
+    <div class="page">
+
+        <!-- Header -->
+        <header class="header">
+            <p class="today-date" id="todayDate"></p>
+            <h1 class="main-title">Tell me all<br>about your day.</h1>
+        </header>
+
+        <!-- Entrada de hoy -->
+        <div class="today-card" id="todayCard">
+            <div class="today-card-top">
+                <span class="today-label">Hoy</span>
+                <button class="edit-btn" id="editBtn">✏️</button>
+            </div>
+            <p class="entry-preview" id="entryPreview">No has escrito nada hoy...</p>
+        </div>
+
+        <!-- Botón + para agregar/editar entrada -->
+        <button class="add-btn" id="addBtn">+</button>
+
+        <!-- Entradas pasadas -->
+        <div class="past-section">
+            <h2 class="past-title">Entradas anteriores</h2>
+            <div class="entries-list" id="entriesList"></div>
+        </div>
+
+        <!-- Botón volver -->
+        <button class="back-home-btn" onclick="window.location.href='home.html'">← Home</button>
+
+
+    </div>
+
+    <!-- Modal para escribir -->
+    <div class="modal-overlay" id="modalOverlay" style="display:none">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-date" id="modalDate"></span>
+                <button class="modal-close" id="modalClose">✕</button>
+            </div>
+            <textarea class="journal-textarea" id="journalTextarea" placeholder="¿Cómo fue tu día?&#10;&#10;Escribe lo que sientes..."></textarea>
+            <div class="modal-actions">
+                <button class="modal-save" id="modalSave">Guardar entrada</button>
+                <button class="modal-delete" id="modalDelete" style="display:none">Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ── Fecha de hoy ──
+        const todayKey = new Date().toISOString().split('T')[0];
+        const now = new Date();
+
+        document.getElementById('todayDate').textContent = now.toLocaleDateString('es-MX', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        });
+
+        function formatDate(dateStr) {
+            const d = new Date(dateStr + 'T12:00:00');
+            return d.toLocaleDateString('es-MX', {
+                weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+            });
+        }
+
+        // ── Cargar entrada de hoy ──
+        function loadToday() {
+            const saved = localStorage.getItem('journal_' + todayKey);
+            const preview = document.getElementById('entryPreview');
+            const editBtn = document.getElementById('editBtn');
+            if (saved) {
+                preview.textContent = saved.length > 100 ? saved.substring(0, 100) + '...' : saved;
+                preview.style.opacity = '1';
+                editBtn.style.display = 'block';
+            } else {
+                preview.textContent = 'No has escrito nada hoy...';
+                preview.style.opacity = '0.4';
+                editBtn.style.display = 'none';
+            }
+        }
+
+        // ── Cargar entradas pasadas ──
+        function loadPastEntries() {
+            const list = document.getElementById('entriesList');
+            list.innerHTML = '';
+
+            // Entradas hardcodeadas de ejemplo
+            const ejemplos = {
+                '2026-04-20': 'Hoy fue un día bastante tranquilo. Trabajé en mi proyecto y salí a caminar por la tarde. Me sentí bien.',
+                '2026-04-19': 'Tuve una reunión larga en la mañana pero terminó bien. Por la noche vi una película con mi familia.',
+                '2026-04-17': 'Día difícil. Muchas cosas en la cabeza. Pero logré terminar lo que tenía pendiente.',
+            };
+
+            // Combina ejemplos con entradas reales de localStorage
+            const allKeys = new Set([...Object.keys(ejemplos)]);
+            for (let i = 0; i < localStorage.length; i++) {
+                const k = localStorage.key(i);
+                if (k.startsWith('journal_') && k !== 'journal_' + todayKey) {
+                    allKeys.add(k.replace('journal_', ''));
+                }
+            }
+
+            // Ordena de más reciente a más antiguo
+            const sorted = [...allKeys].filter(k => k !== todayKey).sort((a, b) => b.localeCompare(a));
+
+            if (sorted.length === 0) {
+                list.innerHTML = '<p class="no-entries">Aún no hay entradas anteriores.</p>';
+                return;
+            }
+
+            sorted.forEach(dateStr => {
+                const text = localStorage.getItem('journal_' + dateStr) || ejemplos[dateStr] || '';
+                const card = document.createElement('div');
+                card.className = 'entry-card';
+                card.innerHTML = `
+                    <div class="entry-card-top">
+                        <span class="entry-card-date">${formatDate(dateStr)}</span>
+                        <button class="entry-edit-btn" data-date="${dateStr}">✏️</button>
+                    </div>
+                    <p class="entry-card-text">${text.length > 80 ? text.substring(0, 80) + '...' : text}</p>
+                `;
+                card.querySelector('.entry-edit-btn').addEventListener('click', () => openModal(dateStr));
+                list.appendChild(card);
+            });
+        }
+
+        // ── Abrir modal ──
+        let currentEditDate = todayKey;
+
+        function openModal(dateStr) {
+            currentEditDate = dateStr;
+            const saved = localStorage.getItem('journal_' + dateStr);
+            document.getElementById('modalDate').textContent = formatDate(dateStr);
+            document.getElementById('journalTextarea').value = saved || '';
+            document.getElementById('modalDelete').style.display = saved ? 'block' : 'none';
+            document.getElementById('modalOverlay').style.display = 'flex';
+            document.getElementById('journalTextarea').focus();
+        }
+
+        document.getElementById('addBtn').addEventListener('click', () => openModal(todayKey));
+        document.getElementById('editBtn').addEventListener('click', () => openModal(todayKey));
+
+        document.getElementById('modalClose').addEventListener('click', () => {
+            document.getElementById('modalOverlay').style.display = 'none';
+        });
+
+        // Cerrar modal tocando el fondo
+        document.getElementById('modalOverlay').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('modalOverlay')) {
+                document.getElementById('modalOverlay').style.display = 'none';
+            }
+        });
+
+        // ── Guardar entrada ──
+        document.getElementById('modalSave').addEventListener('click', () => {
+            const text = document.getElementById('journalTextarea').value.trim();
+            if (!text) return;
+            localStorage.setItem('journal_' + currentEditDate, text);
+            document.getElementById('modalOverlay').style.display = 'none';
+            loadToday();
+            loadPastEntries();
+        });
+
+        // ── Eliminar entrada ──
+        document.getElementById('modalDelete').addEventListener('click', () => {
+            if (confirm('¿Eliminar esta entrada?')) {
+                localStorage.removeItem('journal_' + currentEditDate);
+                document.getElementById('modalOverlay').style.display = 'none';
+                loadToday();
+                loadPastEntries();
+            }
+        });
+
+        // ── Init ──
+        loadToday();
+        loadPastEntries();
+    </script>
+
+</body>
+</html>
