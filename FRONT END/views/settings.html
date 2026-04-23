@@ -23,14 +23,12 @@
 
         <!-- Foto + nombre -->
         <div class="profile-section">
-            <div class="avatar-wrapper" id="avatarWrapper">
-                <img src="" alt="Foto" class="avatar-img" id="avatarImg" style="display:none">
-                <span class="avatar-placeholder" id="avatarPlaceholder">👤</span>
-                <label class="avatar-edit-btn" for="photoInput">📷</label>
-                <input type="file" id="photoInput" accept="image/*" style="display:none">
+            <div class="avatar-wrapper">
+                <span class="avatar-placeholder">👤</span>
+                <span class="avatar-edit-btn">📷</span>
             </div>
             <div class="name-wrapper">
-                <input type="text" class="name-input" id="nameInput" value="Mariana Anguiano">
+                <input type="text" class="name-input" value="Mariana Anguiano" readonly>
                 <span class="field-hint">Tap to edit</span>
             </div>
         </div>
@@ -46,7 +44,7 @@
                     <div class="field-content">
                         <label class="field-label">Weight</label>
                         <div class="field-input-row">
-                            <input type="number" class="field-input" id="pesoInput" value="60">
+                            <input type="number" class="field-input" value="60" readonly>
                             <span class="field-unit">kg</span>
                         </div>
                     </div>
@@ -57,7 +55,7 @@
                     <div class="field-content">
                         <label class="field-label">Height</label>
                         <div class="field-input-row">
-                            <input type="number" class="field-input" id="alturaInput" value="161">
+                            <input type="number" class="field-input" value="161" readonly>
                             <span class="field-unit">cm</span>
                         </div>
                     </div>
@@ -71,7 +69,7 @@
                     <span class="field-icon">✉️</span>
                     <div class="field-content">
                         <label class="field-label">Email</label>
-                        <input type="email" class="field-input full" id="emailInput" value="manguiano@gmail.com">
+                        <input type="email" class="field-input full" value="manguiano@gmail.com" readonly>
                     </div>
                 </div>
                 <div class="divider"></div>
@@ -80,8 +78,8 @@
                     <div class="field-content">
                         <label class="field-label">Password</label>
                         <div class="field-input-row">
-                            <input type="text" class="field-input full" id="passInput" value="MaRiAn4;">
-                            <button class="toggle-pass" id="togglePass">👁</button>
+                            <input type="password" class="field-input full" value="MaRiAn4;" readonly>
+                            <button class="toggle-pass">👁</button>
                         </div>
                     </div>
                 </div>
@@ -89,19 +87,17 @@
 
         </div>
 
-        <!-- Botón guardar -->
-        <button class="save-btn" id="saveBtn">Guardar cambios</button>
-
-        <!-- Mensaje de confirmación -->
-        <p class="save-msg" id="saveMsg" style="display:none">✅ Cambios guardados</p>
+        <!-- Botón guardar (solo visual, sin función) -->
+        <button class="save-btn">Guardar cambios</button>
 
         <button class="logout-btn" onclick="window.location.href='login.html'">Cerrar sesión</button>
-        
+
         <!-- Volver -->
-        <div class="meditation-footer">  <!-- ✅ aquí sí -->
+        <div class="meditation-footer">
             <div class="footer-logo">LOOP</div>
             <button class="back-btn-main" onclick="window.location.href='home.html'">← Atrás</button>
         </div>
     </div>
+
 </body>
 </html>

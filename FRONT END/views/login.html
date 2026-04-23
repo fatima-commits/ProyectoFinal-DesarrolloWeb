@@ -60,7 +60,7 @@
 
                         <div class="button-group">
                             <!-- BIEN -->
-                        <button type="button" class="btn btn-login" id="loginBtn" onclick="window.location.href='home.html'">
+                        <button type="submit" class="btn btn-login" id="loginBtn">
                             Iniciar sesión
                         </button>
                             <button type="button" class="btn btn-register" onclick="toggleForms()">
@@ -182,6 +182,10 @@
             formLogin.classList.toggle('hidden');
             formRegister.classList.toggle('hidden');
         }
+
+        document.getElementById('formLogin').addEventListener('submit', function() {
+            window.location.href = 'home.html';
+        });
 
         // Modal de confirmación
         const confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
