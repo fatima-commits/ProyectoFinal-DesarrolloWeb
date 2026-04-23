@@ -292,3 +292,59 @@ body {
     cursor: pointer;
     flex-shrink: 0;
 }
+
+.meditation-footer {
+    text-align: center;
+    margin-top: 0px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(76, 175, 80, 0.2);
+    width: 100%;
+}
+
+.footer-logo {
+    font-size: 32px;
+    font-weight: 800;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #5FCC69 0%, #ffffff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.back-btn-main {
+    margin-top: 0px;
+    padding: 14px 32px;
+    background: transparent;
+    border: 1.5px solid rgba(76, 175, 80, 0.4);
+    border-radius: 50px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.back-btn-main:hover {
+    border-color: rgba(76, 175, 80, 0.8);
+    background: rgba(76, 175, 80, 0.1);
+    color: #5FCC69;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+        filter: blur(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+.page {
+    animation: slideUp 1.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
