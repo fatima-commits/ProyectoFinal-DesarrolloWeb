@@ -183,7 +183,8 @@
             formRegister.classList.toggle('hidden');
         }
 
-        document.getElementById('formLogin').addEventListener('submit', function() {
+        document.getElementById('formLogin').addEventListener('submit', function(e) {
+            e.preventDefault();
             window.location.href = 'home.html';
         });
 
