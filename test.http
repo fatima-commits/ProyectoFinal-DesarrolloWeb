@@ -1,0 +1,373 @@
+###------- PUNTO 1 ----------
+### Ruta raiz con Auth:
+GET http://localhost:3000/
+x-auth: Pass123
+
+###
+### Ruta Home:
+GET http://localhost:3000/home.html
+x-auth: Pass123
+
+###
+### Ruta Login:
+GET http://localhost:3000/login.html
+
+###
+### Ruta Habits:
+GET http://localhost:3000/habits.html
+x-auth: Pass123
+
+###------- PUNTO 2 ----------
+GET http://localhost:3000/users?page=1&limit=3
+x-auth: admin_auth
+
+###------- PUNTO 3 ----------
+### Crear usuario 1:
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+  "name": "Juan Pérez",
+  "email": "juan@example.com",
+  "password": "Pass12345",
+  "confirm_password": "Pass12345"
+}
+
+###
+### Crear usuario 2:
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+  "name": "María García",
+  "email": "maria@example.com",
+  "password": "Pass45678",
+  "confirm_password": "Pass45678"
+}
+
+###
+### Crear usuario 3:
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+  "name": "Carlos López",
+  "email": "carlos@example.com",
+  "password": "Pass78910",
+  "confirm_password": "Pass78910"
+}
+
+###
+### Consultar Hábitos vacio:
+GET http://localhost:3000/api/habits?page=1&limit=3
+x-auth: Pass12345
+
+###------- PUNTO 4 ----------
+### Consultar usuario con ID = 2:
+GET http://localhost:3000/users/2
+x-auth: Pass45678
+
+###------- PUNTO 5 ----------
+### Consultar usuarios pagina 1, limit 2:
+GET http://localhost:3000/users?page=1&limit=2
+x-auth: admin_auth
+
+###------- PUNTO 6 ----------
+### Editar usuario ID: 3 con nombre completo:
+PATCH http://localhost:3000/users/3
+x-auth: Pass78910
+Content-Type: application/json
+
+{
+  "name": "Fatima Velez"
+}
+
+###------- PUNTO 7 ----------
+### Eliminar usuario ID: 1:
+DELETE http://localhost:3000/users/1
+x-auth: Pass12345
+
+###
+### Consultar todos los usuarios:
+GET http://localhost:3000/users?page=1&limit=10
+x-auth: admin_auth
+
+###------- PUNTO 8 ----------
+### Crear hábito 1 para usuario ID=2 (María García):
+POST http://localhost:3000/api/habits
+x-auth: Pass45678
+Content-Type: application/json
+
+{
+  "after": "desayunar",
+  "going_to": "hacer ejercicio",
+  "days": ["L", "M", "M", "J", "V"],
+  "color": "orange",
+  "icon": "🏋️"
+}
+
+###
+### Crear hábito 2 para usuario ID=2 (María García):
+POST http://localhost:3000/api/habits
+x-auth: Pass45678
+Content-Type: application/json
+
+{
+  "after": "almorzar",
+  "going_to": "meditar 10 minutos",
+  "days": ["L", "M", "J", "V"],
+  "color": "purple",
+  "icon": "🧘"
+}
+
+###
+### Crear hábito 3 para usuario ID=2 (María García):
+POST http://localhost:3000/api/habits
+x-auth: Pass45678
+Content-Type: application/json
+
+{
+  "after": "cenar",
+  "going_to": "leer 50 páginas",
+  "days": ["L", "M", "M", "J", "V"],
+  "color": "cyan",
+  "icon": "📖"
+}
+
+###------- PUNTO 9 ----------
+### Consultar hábito con ID = 1:
+GET http://localhost:3000/api/habits/1
+x-auth: Pass45678
+
+###------- PUNTO 10 ----------
+### Consultar hábitos pagina 2, limit 1:
+GET http://localhost:3000/api/habits?page=2&limit=1
+x-auth: Pass45678
+
+###------- PUNTO 11 ----------
+### Filtrar hábitos por color (orange):
+GET http://localhost:3000/api/habits?color=orange
+x-auth: Pass45678
+
+###
+### Filtrar hábitos por día (Viernes):
+GET http://localhost:3000/api/habits?day=V
+x-auth: Pass45678
+
+###
+### Filtrar hábitos por estado activo:
+GET http://localhost:3000/api/habits?active=true
+x-auth: Pass45678
+
+###------- PUNTO 12 ----------
+### Editar hábito ID: 2 (cambiar color y días):
+PATCH http://localhost:3000/api/habits/2
+x-auth: Pass45678
+Content-Type: application/json
+
+{
+  "going_to": "meditar 20 minutos",
+  "color": "pink",
+  "days": ["L", "M", "M", "J", "V"]
+}
+
+###
+### Editar hábito ID: 1 (marcar como inactivo):
+PATCH http://localhost:3000/api/habits/1
+x-auth: Pass45678
+Content-Type: application/json
+
+{
+  "active": false
+}
+
+###------- PUNTO 13 ----------
+### Eliminar hábito ID: 3:
+DELETE http://localhost:3000/api/habits/3
+x-auth: Pass45678
+
+###
+### Consultar todos los hábitos:
+GET http://localhost:3000/api/habits?page=1&limit=10
+x-auth: Pass45678
+
+###------- PUNTO 14 ----------
+### Crear hábito para usuario ID=3 (Carlos López) - Hábito 1:
+POST http://localhost:3000/api/habits
+x-auth: Pass78910
+Content-Type: application/json
+
+{
+  "after": "lavarme los dientes",
+  "going_to": "tomar vitaminas",
+  "days": ["L", "M", "M", "J", "V"],
+  "color": "orange",
+  "icon": "💊"
+}
+
+###
+### Crear hábito para usuario ID=3 (Carlos López) - Hábito 2:
+POST http://localhost:3000/api/habits
+x-auth: Pass78910
+Content-Type: application/json
+
+{
+  "after": "desayunar",
+  "going_to": "salir a caminar",
+  "days": ["L", "M", "J", "V"],
+  "color": "cyan",
+  "icon": "🚶"
+}
+
+###
+### Crear hábito para usuario ID=3 (Carlos López) - Hábito 3:
+POST http://localhost:3000/api/habits
+x-auth: Pass78910
+Content-Type: application/json
+
+{
+  "after": "hacer mi skincare",
+  "going_to": "bañarme",
+  "days": ["M", "M", "J"],
+  "color": "pink",
+  "icon": "🚿"
+}
+
+###------- PUNTO 15 ----------
+### Consultar hábito específico ID = 4 (usuario 3):
+GET http://localhost:3000/api/habits/4
+x-auth: Pass78910
+
+###------- PUNTO 16 ----------
+### Consultar hábitos paginados - Página 1, límite 2:
+GET http://localhost:3000/api/habits?page=1&limit=2
+x-auth: Pass78910
+
+###
+### Consultar hábitos paginados - Página 2, límite 2:
+GET http://localhost:3000/api/habits?page=2&limit=2
+x-auth: Pass78910
+
+###------- PUNTO 17 ----------
+### Editar hábito ID: 4 (cambiar descripción):
+PATCH http://localhost:3000/api/habits/4
+x-auth: Pass78910
+Content-Type: application/json
+
+{
+  "after": "levantarme por la mañana",
+  "going_to": "tomar vitaminas premium",
+  "icon": "✨"
+}
+
+###
+### Editar hábito ID: 5 (cambiar todos los días):
+PATCH http://localhost:3000/api/habits/5
+x-auth: Pass78910
+Content-Type: application/json
+
+{
+  "days": ["L", "M", "M", "J", "V", "S"],
+  "color": "purple"
+}
+
+###------- PUNTO 18 ----------
+### Eliminar hábito ID: 6:
+DELETE http://localhost:3000/api/habits/6
+x-auth: Pass78910
+
+###
+### Consultar todos los hábitos del usuario 3:
+GET http://localhost:3000/api/habits?page=1&limit=10
+x-auth: Pass78910
+
+###------- PUNTO 19 ----------
+### Filtros avanzados - Hábitos de color purple del usuario 2:
+GET http://localhost:3000/api/habits?color=purple&page=1&limit=5
+x-auth: Pass45678
+
+###
+### Filtros avanzados - Hábitos programados para lunes del usuario 3:
+GET http://localhost:3000/api/habits?day=L&page=1&limit=5
+x-auth: Pass78910
+
+###
+### Filtros avanzados - Solo hábitos activos del usuario 3:
+GET http://localhost:3000/api/habits?active=true&page=1&limit=10
+x-auth: Pass78910
+
+###------- PUNTO 20 ----------
+### Crear múltiples hábitos rápidamente para usuario 2:
+POST http://localhost:3000/api/habits
+x-auth: Pass45678
+Content-Type: application/json
+
+{
+  "after": "llegar a casa",
+  "going_to": "cambiarme de ropa",
+  "days": ["L", "M", "M", "J", "V", "S"],
+  "color": "cyan",
+  "icon": "👕"
+}
+
+###
+POST http://localhost:3000/api/habits
+x-auth: Pass45678
+Content-Type: application/json
+
+{
+  "after": "terminar de trabajar",
+  "going_to": "revisar mis mails",
+  "days": ["L", "M", "M", "J", "V"],
+  "color": "orange",
+  "icon": "📧"
+}
+
+###
+POST http://localhost:3000/api/habits
+x-auth: Pass45678
+Content-Type: application/json
+
+{
+  "after": "antes de dormir",
+  "going_to": "apagar el teléfono",
+  "days": ["L", "M", "M", "J", "V", "S", "D"],
+  "color": "purple",
+  "icon": "📵"
+}
+
+###------- PUNTO 21 ----------
+### Listado completo final de todos los hábitos por usuario:
+
+### Hábitos del usuario 2 (María García):
+GET http://localhost:3000/api/habits?page=1&limit=20
+x-auth: Pass45678
+
+###
+### Hábitos del usuario 3 (Carlos López):
+GET http://localhost:3000/api/habits?page=1&limit=20
+x-auth: Pass78910
+
+###------- PUNTO 22 ----------
+### Verificaciones de permisos - Intentar acceder a hábito de otro usuario:
+GET http://localhost:3000/api/habits/1
+x-auth: Pass78910
+
+###
+### Intentar editar hábito de otro usuario:
+PATCH http://localhost:3000/api/habits/1
+x-auth: Pass78910
+Content-Type: application/json
+
+{
+  "color": "pink"
+}
+
+###
+### Intentar eliminar hábito de otro usuario:
+DELETE http://localhost:3000/api/habits/1
+x-auth: Pass78910
+
+###------- PUNTO 23 ----------
+### Validación sin autenticación:
+GET http://localhost:3000/api/habits
