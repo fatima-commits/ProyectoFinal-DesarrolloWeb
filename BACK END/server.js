@@ -13,5 +13,5 @@ app.use('/assets', express.static('../FRONTEND/assets'));
 app.use(router);
 
 app.listen(port, () => {
-  console.log(`Práctica 4 corriendo en el puerto ${port}!`);
+  console.log(`Proyecto final corriendo en el puerto ${port}!`);
 });
