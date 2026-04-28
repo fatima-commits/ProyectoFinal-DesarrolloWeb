@@ -34,6 +34,14 @@
                     <form id="formLogin" class="form-section">
                         <div class="form-title">Welcome back!</div>
 
+                        <!-- Mensaje de error -->
+                        <div id="loginError" class="alert alert-danger" role="alert" style="display: none;">
+                        </div>
+
+                        <!-- Mensaje de éxito -->
+                        <div id="loginSuccess" class="alert alert-success" role="alert" style="display: none;">
+                        </div>
+
                         <div class="form-group">
                             <label for="InputEmail1" class="form-label">Correo</label>
                             <input 
@@ -59,10 +67,9 @@
                         </div>
 
                         <div class="button-group">
-                            <!-- BIEN -->
-                        <button type="submit" class="btn btn-login" id="loginBtn">
-                            Iniciar sesión
-                        </button>
+                            <button type="submit" class="btn btn-login" id="loginBtn">
+                                Iniciar sesión
+                            </button>
                             <button type="button" class="btn btn-register" onclick="toggleForms()">
                                 Registrarse
                             </button>
@@ -72,6 +79,14 @@
                     <!-- FORM REGISTER -->
                     <form id="formRegister" class="form-section hidden">
                         <div class="form-title">Create Account</div>
+
+                        <!-- Mensaje de error -->
+                        <div id="registerError" class="alert alert-danger" role="alert" style="display: none;">
+                        </div>
+
+                        <!-- Mensaje de éxito -->
+                        <div id="registerSuccess" class="alert alert-success" role="alert" style="display: none;">
+                        </div>
 
                         <div class="form-group">
                             <label for="InputName" class="form-label">Nombre Completo</label>
@@ -107,6 +122,7 @@
                                 placeholder="••••••••"
                                 required
                             />
+                            <small class="form-text text-muted">Mínimo 8 caracteres</small>
                         </div>
 
                         <div class="form-group">
@@ -181,11 +197,142 @@
             
             formLogin.classList.toggle('hidden');
             formRegister.classList.toggle('hidden');
+
+            // Limpiar mensajes de error y éxito
+            document.getElementById('loginError').style.display = 'none';
+            document.getElementById('loginSuccess').style.display = 'none';
+            document.getElementById('registerError').style.display = 'none';
+            document.getElementById('registerSuccess').style.display = 'none';
         }
 
-        document.getElementById('formLogin').addEventListener('submit', function(e ) {
+        // Manejo de LOGIN
+        document.getElementById('formLogin').addEventListener('submit', async function(e) {
             e.preventDefault();
-            window.location.href = 'home.html';
+
+            const email = document.getElementById('InputEmail1').value;
+            const password = document.getElementById('InputPassword1').value;
+            const errorDiv = document.getElementById('loginError');
+            const successDiv = document.getElementById('loginSuccess');
+
+            try {
+                const response = await fetch('/api/users/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (response.ok) {
+                    const user = await response.json();
+                    
+                    // Guardar datos del usuario en localStorage
+                    localStorage.setItem('user', JSON.stringify(user));
+                    localStorage.setItem('authToken', user.contraseña);
+                    
+                    // Mostrar mensaje de éxito
+                    successDiv.textContent = '¡Login exitoso! Redirigiendo...';
+                    successDiv.style.display = 'block';
+                    errorDiv.style.display = 'none';
+
+                    // Redirigir después de 1.5 segundos
+                    setTimeout(() => {
+                        window.location.href = '/home.html';
+                    }, 1500);
+
+                } else if (response.status === 401) {
+                    errorDiv.textContent = 'Email o contraseña incorrectos. Intenta de nuevo.';
+                    errorDiv.style.display = 'block';
+                    successDiv.style.display = 'none';
+                } else {
+                    const error = await response.json();
+                    errorDiv.textContent = error.error || 'Error en el login. Intenta de nuevo.';
+                    errorDiv.style.display = 'block';
+                    successDiv.style.display = 'none';
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                errorDiv.textContent = 'Error de conexión. Intenta de nuevo.';
+                errorDiv.style.display = 'block';
+                successDiv.style.display = 'none';
+            }
+        });
+
+        // Manejo de REGISTER
+        document.getElementById('formRegister').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('InputName').value;
+            const email = document.getElementById('InputEmail2').value;
+            const password = document.getElementById('InputPassword2').value;
+            const confirmPassword = document.getElementById('InputConfirmPassword').value;
+            const errorDiv = document.getElementById('registerError');
+            const successDiv = document.getElementById('registerSuccess');
+
+            // Validación en cliente
+            if (password !== confirmPassword) {
+                errorDiv.textContent = 'Las contraseñas no coinciden. Intenta de nuevo.';
+                errorDiv.style.display = 'block';
+                successDiv.style.display = 'none';
+                return;
+            }
+
+            if (password.length < 8) {
+                errorDiv.textContent = 'La contraseña debe tener mínimo 8 caracteres.';
+                errorDiv.style.display = 'block';
+                successDiv.style.display = 'none';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/users/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email, password, confirm_password: confirmPassword })
+                });
+
+                if (response.ok) {
+                    const user = await response.json();
+                    
+                    // Mostrar mensaje de éxito
+                    successDiv.textContent = '¡Registro exitoso! Iniciando sesión automáticamente...';
+                    successDiv.style.display = 'block';
+                    errorDiv.style.display = 'none';
+
+                    // Guardar datos del usuario
+                    localStorage.setItem('user', JSON.stringify(user));
+                    localStorage.setItem('authToken', user.contraseña);
+
+                    // Limpiar formularios
+                    document.getElementById('formRegister').reset();
+                    document.getElementById('formLogin').reset();
+
+                    // Redirigir después de 1.5 segundos
+                    setTimeout(() => {
+                        window.location.href = '/home.html';
+                    }, 1500);
+
+                } else if (response.status === 400) {
+                    const error = await response.json();
+                    errorDiv.textContent = error.error || error.message || 'Error en el registro. Intenta de nuevo.';
+                    errorDiv.style.display = 'block';
+                    successDiv.style.display = 'none';
+                } else {
+                    const error = await response.json();
+                    errorDiv.textContent = error.error || 'Error desconocido. Intenta de nuevo.';
+                    errorDiv.style.display = 'block';
+                    successDiv.style.display = 'none';
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                errorDiv.textContent = 'Error de conexión. Intenta de nuevo.';
+                errorDiv.style.display = 'block';
+                successDiv.style.display = 'none';
+            }
         });
 
         // Modal de confirmación
