@@ -47,24 +47,34 @@
                 <p class="meditation-duration">25 minutos de relajación</p>
             </div>
 
-            <!-- Progress Bar -->
-            <div class="progress-container">
-                <div class="progress-bar-wrapper" onclick="seekVideo(event)">
-                    <div class="progress-bar-fill" id="progressBar"></div>
+            <div class="pomodoro-container">
+                <div class="pomodoro-tabs">
+                    <button class="pomodoro-tab active" data-mode="meditation" onclick="setPomodoroMode('meditation')">🧘 Meditación</button>
+                    <button class="pomodoro-tab" data-mode="break" onclick="setPomodoroMode('break')">🌿 Descanso</button>
                 </div>
-                <div class="progress-time">
-                    <span id="currentTime">0:00</span>
-                    <span id="duration">25:00</span>
+                
+                <div class="pomodoro-timer">
+                    <div class="timer-display" id="timerDisplay">25:00</div>
+                    <div class="timer-controls">
+                        <button class="timer-btn" id="resetTimerBtn" onclick="resetTimer()">⟳ Reiniciar</button>
+                        <button class="timer-btn primary" id="startPauseBtn" onclick="toggleTimer()">▶ Iniciar</button>
+                    </div>
+                </div>
+                
+                <div class="pomodoro-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Ciclos completados</div>
+                        <div class="stat-value" id="cycleCount">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Modo actual</div>
+                        <div class="stat-value" id="currentModeLabel">Meditación</div>
+                    </div>
                 </div>
             </div>
 
             <!-- Play Controls -->
             <div class="controls-container">
-                <div class="play-controls">
-                    <button class="control-btn" onclick="previousTrack()" title="Anterior">⏮</button>
-                    <button class="control-btn play-btn" id="playBtn" onclick="togglePlay()" title="Reproducir/Pausar">▶</button>
-                    <button class="control-btn" onclick="nextTrack()" title="Siguiente">⏭</button>
-                </div>
 
                 <!-- Volume Control -->
                 <div class="volume-control">
@@ -80,6 +90,8 @@
                     />
                 </div>
             </div>
+
+            <br>
 
             <!-- Footer -->
             <div class="meditation-footer">
@@ -102,9 +114,7 @@
     ></script>
 
     <script>
-        // Añadir despues a un script
-        //Las funciones para simular el tiempo se le pidieron a Chat.
-        //En el backend despues hay que cambiarlo para implementarlo bien.
+        // Variables del reproductor de video
         let isPlaying = false;
         let currentSpeed = 1;
         const playBtn = document.getElementById('playBtn');
@@ -113,58 +123,327 @@
         const durationEl = document.getElementById('duration');
         const volumeSlider = document.getElementById('volumeSlider');
         const iframe = document.querySelector('.video-player');
+        
+        let videoProgress = 0;
+        let videoInterval = null;
 
-        // Reproducción
+        // Variables del Timer Pomodoro
+        let timerMode = 'meditation'; // 'meditation' o 'break'
+        let timeRemaining = 25 * 60; // 25 minutos en segundos
+        let timerRunning = false;
+        let timerInterval = null;
+        let cyclesCompleted = 0;
+        
+        // Configuración de tiempos (en segundos)
+        const TIMES = {
+            meditation: 25 * 60,
+            break: 5 * 60
+        };
+        
+        // Elementos del DOM del timer
+        const timerDisplay = document.getElementById('timerDisplay');
+        const startPauseBtn = document.getElementById('startPauseBtn');
+        const resetTimerBtn = document.getElementById('resetTimerBtn');
+        const cycleCountEl = document.getElementById('cycleCount');
+        const currentModeLabel = document.getElementById('currentModeLabel');
+        
+        // Función para actualizar el título y estilos de los tabs
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Cambiar color del display según el modo
+            if (timerMode === 'meditation') {
+                timerDisplay.style.color = '#a855f7';
+            } else {
+                timerDisplay.style.color = '#48d1cc';
+            }
+        }
+        
+        // Cambiar modo del timer
+        function setPomodoroMode(mode) {
+            if (timerRunning) {
+                toggleTimer(); // Detener el timer si está corriendo
+            }
+            
+            timerMode = mode;
+            
+            // Actualizar tabs activos
+            document.querySelectorAll('.pomodoro-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if ((mode === 'meditation' && tab.textContent.includes('Meditación')) ||
+                    (mode === 'break' && tab.textContent.includes('Descanso'))) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            // Actualizar tiempo restante
+            timeRemaining = TIMES[timerMode];
+            updateTimerDisplay();
+            
+            // Actualizar etiqueta
+            currentModeLabel.textContent = timerMode === 'meditation' ? 'Meditación' : 'Descanso';
+            
+            // Detener animación si existe
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            
+            timerRunning = false;
+            startPauseBtn.textContent = '▶ Iniciar';
+            startPauseBtn.style.background = 'linear-gradient(135deg, #6c5ce7, #a855f7)';
+        }
+        
+        // Iniciar o pausar el timer
+        function toggleTimer() {
+            if (timerRunning) {
+                // Pausar timer
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                }
+                timerRunning = false;
+                startPauseBtn.textContent = '▶ Iniciar';
+                startPauseBtn.style.background = 'linear-gradient(135deg, #6c5ce7, #a855f7)';
+                
+                // También pausar el video si está reproduciéndose
+                if (isPlaying) {
+                    togglePlay();
+                }
+            } else {
+                // Iniciar timer
+                if (timeRemaining <= 0) {
+                    resetTimer();
+                }
+                
+                timerInterval = setInterval(() => {
+                    if (timeRemaining > 0) {
+                        timeRemaining--;
+                        updateTimerDisplay();
+                        
+                        // Sincronizar con el video si está en modo meditación
+                        if (timerMode === 'meditation' && isPlaying && videoInterval) {
+                            // Pequeña sincronización visual opcional
+                        }
+                        
+                        // Reproducir sonido de notificación cuando quedan 5 segundos
+                        if (timeRemaining === 5) {
+                            // Sonido suave de campana (usando Web Audio API)
+                            playNotificationSound();
+                        }
+                        
+                        if (timeRemaining === 0) {
+                            // Timer completado
+                            clearInterval(timerInterval);
+                            timerInterval = null;
+                            timerRunning = false;
+                            startPauseBtn.textContent = '▶ Iniciar';
+                            
+                            // Sonido de finalización
+                            playCompletionSound();
+                            
+                            if (timerMode === 'meditation') {
+                                // Completar un ciclo de meditación
+                                cyclesCompleted++;
+                                cycleCountEl.textContent = cyclesCompleted;
+                                
+                                // Mostrar alerta sutil
+                                showNotification('✨ ¡Meditación completada! Toma un descanso ✨');
+                                
+                                // Cambiar automáticamente a modo descanso después de 2 segundos
+                                setTimeout(() => {
+                                    setPomodoroMode('break');
+                                }, 2000);
+                            } else {
+                                // Descanso completado
+                                showNotification('🌿 Descanso completado. ¿Listo para meditar? 🌿');
+                                
+                                // Cambiar automáticamente a modo meditación
+                                setTimeout(() => {
+                                    setPomodoroMode('meditation');
+                                }, 2000);
+                            }
+                        }
+                    }
+                }, 1000);
+                
+                timerRunning = true;
+                startPauseBtn.textContent = '⏸ Pausar';
+                startPauseBtn.style.background = 'linear-gradient(135deg, #f39c12, #e74c3c)';
+                
+                // Iniciar el video si está en modo meditación y el video está pausado
+                if (timerMode === 'meditation' && !isPlaying) {
+                    togglePlay();
+                }
+            }
+        }
+        
+        // Reiniciar el timer
+        function resetTimer() {
+            const wasRunning = timerRunning;
+            if (timerRunning) {
+                toggleTimer(); // Detener si está corriendo
+            }
+            
+            timeRemaining = TIMES[timerMode];
+            updateTimerDisplay();
+            
+            if (wasRunning) {
+                toggleTimer(); // Reiniciar si estaba corriendo
+            }
+        }
+        
+        // Reproducir sonido de notificación
+        function playNotificationSound() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 880;
+                gainNode.gain.value = 0.3;
+                
+                oscillator.start();
+                gainNode.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 1);
+                oscillator.stop(audioContext.currentTime + 0.5);
+            } catch(e) {
+                console.log('Web Audio API no disponible');
+            }
+        }
+        
+        function playCompletionSound() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                // Melodía simple de finalización
+                oscillator.frequency.value = 523.25;
+                gainNode.gain.value = 0.3;
+                oscillator.start();
+                gainNode.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.3);
+                
+                setTimeout(() => {
+                    const osc2 = audioContext.createOscillator();
+                    const gain2 = audioContext.createGain();
+                    osc2.connect(gain2);
+                    gain2.connect(audioContext.destination);
+                    osc2.frequency.value = 659.25;
+                    gain2.gain.value = 0.3;
+                    osc2.start();
+                    gain2.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.3);
+                    osc2.stop(audioContext.currentTime + 0.3);
+                }, 300);
+                
+                oscillator.stop(audioContext.currentTime + 0.3);
+            } catch(e) {
+                console.log('Web Audio API no disponible');
+            }
+        }
+        
+        // Mostrar notificación visual
+        function showNotification(message) {
+            const notificationDiv = document.createElement('div');
+            notificationDiv.textContent = message;
+            notificationDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: linear-gradient(135deg, #6c5ce7, #a855f7);
+                color: white;
+                padding: 12px 24px;
+                border-radius: 50px;
+                font-size: 14px;
+                font-weight: 500;
+                z-index: 1000;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                animation: slideDown 0.3s ease;
+            `;
+            document.body.appendChild(notificationDiv);
+            
+            setTimeout(() => {
+                notificationDiv.style.animation = 'slideUp 0.3s ease';
+                setTimeout(() => {
+                    notificationDiv.remove();
+                }, 300);
+            }, 3000);
+        }
+        
+        // Añadir animaciones CSS para notificaciones
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateX(-50%) translateY(-20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(-50%) translateY(0);
+                }
+            }
+            @keyframes slideUp {
+                from {
+                    opacity: 1;
+                    transform: translateX(-50%) translateY(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateX(-50%) translateY(-20px);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Funciones del reproductor existentes
         function togglePlay() {
             isPlaying = !isPlaying;
             playBtn.textContent = isPlaying ? '⏸' : '▶';
             playBtn.style.animation = isPlaying ? 'pulse 2s infinite' : 'none';
             
-            // Aquí puedes agregar lógica para controlar el video de YouTube
+            if (isPlaying && timerMode === 'meditation' && !timerRunning) {
+                toggleTimer();
+            } else if (!isPlaying && timerRunning) {
+                toggleTimer();
+            }
+            
             console.log(isPlaying ? 'Reproduciendo' : 'Pausado');
         }
-
-        // Pista anterior
+        
         function previousTrack() {
             console.log('Pista anterior');
-            // Aquí puedes agregar lógica para cambiar de meditación
+            resetTimer();
         }
-
-        // Siguiente pista
+        
         function nextTrack() {
             console.log('Siguiente pista');
-            // Aquí puedes agregar lógica para cambiar de meditación
+            resetTimer();
         }
-
-        // Velocidad de reproducción
-        function setSpeed(speed) {
-            currentSpeed = speed;
-            // Actualizar botones activos
-            document.querySelectorAll('.speed-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            console.log(`Velocidad: ${speed}x`);
-        }
-
-        // Volumen
+        
         function setVolume(value) {
             console.log(`Volumen: ${value}%`);
         }
-
-        // Buscar en el video
+        
         function seekVideo(event) {
             const rect = event.currentTarget.getBoundingClientRect();
             const percent = (event.clientX - rect.left) / rect.width;
             progressBar.style.width = (percent * 100) + '%';
             console.log(`Buscar a: ${percent * 100}%`);
         }
-
-        // Ir atrás
+        
         function goBack() {
             window.location.href = 'mentalHealth.html';
         }
-
+        
         // Simular progreso del video
         setInterval(() => {
             if (isPlaying) {
@@ -172,13 +451,10 @@
                 const newPercent = currentPercent + 0.1;
                 if (newPercent <= 100) {
                     progressBar.style.width = newPercent + '%';
-                    
-                    // Actualizar tiempo actual (simulado)
                     const totalSeconds = 25 * 60;
                     const currentSeconds = Math.floor((newPercent / 100) * totalSeconds);
                     currentTimeEl.textContent = formatTime(currentSeconds);
                 } else {
-                    // Fin del video
                     isPlaying = false;
                     playBtn.textContent = '▶';
                     playBtn.style.animation = 'none';
@@ -187,20 +463,19 @@
                 }
             }
         }, 100);
-
-        // Formatear tiempo
+        
         function formatTime(seconds) {
             const mins = Math.floor(seconds / 60);
             const secs = seconds % 60;
             return `${mins}:${secs.toString().padStart(2, '0')}`;
         }
-
+        
         // Inicializar
         document.addEventListener('DOMContentLoaded', () => {
             durationEl.textContent = '25:00';
-            console.log('Reproductor de meditación listo');
+            updateTimerDisplay();
+            console.log('Reproductor de meditación y Pomodoro listo');
         });
-
     </script>
 </body>
 </html>

@@ -3,7 +3,6 @@ const router = require('./routes/api.js');
 const app=express();
 const port = 3000;
 
-
 app.use(express.json());
 app.use(express.static('../FRONTEND'));
 app.use('/controllers', express.static('../FRONTEND/controllers'));
