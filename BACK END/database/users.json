@@ -5,5 +5,19 @@
     "email": "fatima@ejemplo.com",
     "contraseña": "hola1234",
     "joined_at": "2026-04-30T15:41:25.527Z"
+  },
+  {
+    "id": 2,
+    "name": "Juan Pérez",
+    "email": "juan@example.com",
+    "contraseña": "Pass123456",
+    "joined_at": "2026-04-30T16:12:53.351Z"
+  },
+  {
+    "id": 3,
+    "name": "María García",
+    "email": "maria@example.com",
+    "contraseña": "Pass234567",
+    "joined_at": "2026-04-30T16:12:58.036Z"
   }
 ]
