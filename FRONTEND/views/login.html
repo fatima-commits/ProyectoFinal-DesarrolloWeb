@@ -221,6 +221,12 @@
                     // Guardar datos del usuario en sessionStorage
                     sessionStorage.setItem('user', JSON.stringify(user));
                     
+                    // ✅ GUARDAR LA CONTRASEÑA (necesaria para journal, habits y otros módulos)
+                    sessionStorage.setItem('password', password);
+                    
+                    console.log('✅ Login exitoso - Usuario:', user.email);
+                    console.log('✅ Contraseña guardada en sessionStorage');
+                    
                     // Mostrar mensaje de éxito
                     successDiv.textContent = '¡Login exitoso! Redirigiendo...';
                     successDiv.style.display = 'block';
@@ -304,12 +310,18 @@
                 if (response.ok) {
                     const user = await response.json();
                     
+                    // Guardar datos del usuario en sessionStorage
+                    sessionStorage.setItem('user', JSON.stringify(user));
+                    
+                    // ✅ GUARDAR LA CONTRASEÑA (necesaria para journal, habits y otros módulos)
+                    sessionStorage.setItem('password', password);
+                    
+                    console.log('✅ Registro exitoso - Usuario:', user.email);
+                    console.log('✅ Contraseña guardada en sessionStorage');
+                    
                     // Mostrar mensaje de éxito
                     successDiv.textContent = '¡Registro exitoso! Redirigiendo...';
                     successDiv.style.display = 'block';
-
-                    // Guardar datos del usuario
-                    sessionStorage.setItem('user', JSON.stringify(user));
 
                     // Limpiar formulario
                     document.getElementById('registerName').value = '';

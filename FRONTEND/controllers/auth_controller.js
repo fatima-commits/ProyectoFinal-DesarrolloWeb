@@ -1,49 +1,56 @@
-function toggleForms() {
-    let form_login = document.getElementById('formLogin'),
-        form_register = document.getElementById('formRegister');
-    if (form_register.style.display == 'none') {
-        form_login.style.display = 'none';
-        form_register.style.display = 'block';
+const local_url = "http://localhost:3000/";
+
+// Validar sesión
+function validateSession() {
+    const user = sessionStorage.getItem('user');
+    if (!user) {
+        window.location.href = local_url + 'login.html';
+        return false;
     }
-    else {
-        form_login.style.display = 'block';
-        form_register.style.display = 'none';
-    }
+    return true;
 }
 
-function login(event) {
-    event.preventDefault();
-    let data = new FormData(event.target);
-
+// Login
+function performLogin(email, password) {
     fetch(local_url + 'login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(Object.fromEntries(data.entries()))
+        body: JSON.stringify({ email, password })
     })
     .then(response => {
-        if (!response.ok) alert("Correo y/o contraseña incorrectos");
+        if (!response.ok) {
+            return response.json().then(err => {
+                throw new Error(err.error || 'Error en login');
+            });
+        }
         return response.json();
     })
-    .then(user => {
-        // Agregar la contraseña al objeto user antes de guardar
-        user.contraseña = data.get('password');
-        sessionStorage.setItem('user', JSON.stringify(user));
+    .then(data => {
+        // Guardar usuario CON contraseña (necesaria para autenticación)
+        sessionStorage.setItem('user', JSON.stringify(data.user));
+        // Guardar contraseña por separado también (backup)
+        sessionStorage.setItem('password', password);
+        
+        console.log('✅ Login exitoso:', data.user.email);
         window.location.href = local_url + 'home.html';
     })
-    .catch(err => {
-        console.error("Error en login:", err);
+    .catch(error => {
+        console.error('Error:', error);
+        alert('❌ ' + error.message);
     });
 }
 
-function register(event) {
-    event.preventDefault();
-    let data = new FormData(event.target);
-    let formData = Object.fromEntries(data.entries());
+// Register
+function performRegister(name, email, password, confirmPassword) {
+    if (password !== confirmPassword) {
+        alert('❌ Las contraseñas no coinciden');
+        return;
+    }
 
-    if (formData.password !== formData.confirm_password) {
-        alert("Las contraseñas no coinciden");
+    if (password.length < 8) {
+        alert('❌ La contraseña debe tener al menos 8 caracteres');
         return;
     }
 
@@ -52,29 +59,38 @@ function register(event) {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({ name, email, password })
     })
     .then(response => {
         if (!response.ok) {
             return response.json().then(err => {
-                throw new Error(err.error || "Error al registrar usuario");
+                throw new Error(err.error || 'Error en registro');
             });
         }
         return response.json();
     })
-    .then(user => {
-        // Guardar usuario con contraseña
-        user.contraseña = formData.password;
-        sessionStorage.setItem('user', JSON.stringify(user));
+    .then(data => {
+        // Guardar usuario CON contraseña
+        sessionStorage.setItem('user', JSON.stringify(data.user));
+        // Guardar contraseña por separado también
+        sessionStorage.setItem('password', password);
+        
+        console.log('✅ Registro exitoso:', data.user.email);
+        alert('✅ ¡Registro exitoso! Bienvenido ' + data.user.name);
         window.location.href = local_url + 'home.html';
     })
-    .catch(err => {
-        console.error("Error en registro:", err);
-        alert(err.message);
+    .catch(error => {
+        console.error('Error:', error);
+        alert('❌ ' + error.message);
     });
 }
 
+// Logout
 function logout() {
     sessionStorage.clear();
     window.location.href = local_url;
+}
+
+if (document.getElementById('btnLogout')) {
+    document.getElementById('btnLogout').addEventListener('click', logout);
 }

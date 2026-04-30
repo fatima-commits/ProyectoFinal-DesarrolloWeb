@@ -1,9 +1,6 @@
 const express = require('express');
 const path = require('path');
-
 const routerApi = express.Router();
-
-console.log('📡 Cargando rutas de api.js...');
 
 // CARGAR ROUTERS CON MANEJO DE ERRORES
 let usersRoutes, habitsRoutes, usersController;
@@ -27,6 +24,13 @@ try {
     console.log('✅ habits.js cargado');
 } catch (error) {
     console.error('❌ Error al cargar habits.js:', error.message);
+}
+
+try {
+    habitsRoutes = require('./journals.js');
+    console.log('✅ journals.js cargado');
+} catch (error) {
+    console.error('❌ Error al cargar journals.js:', error.message);
 }
 
 // RUTAS DE PÁGINAS
@@ -77,6 +81,10 @@ if (usersRoutes) {
 if (habitsRoutes) {
     routerApi.use('/habits', habitsRoutes);
 }
+
+//RUTAS DE JOURNAL
+const journalsRoutes = require('./journals.js');
+routerApi.use('/journals', journalsRoutes);
 
 // RUTAS 404
 routerApi.use((req, res) => {
