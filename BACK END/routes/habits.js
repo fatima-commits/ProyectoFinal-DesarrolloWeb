@@ -1,6 +1,8 @@
 const express = require('express');
 const routerHabits = express.Router();
-const habitsController = require('../controllers/habits_api_controller');
+
+// Importar controlador - NOMBRE EXACTO
+const habitsController = require('../controllers/../controllers/habits_api_controllers');
 
 // POST /habits - Crear nuevo hábito (requiere autenticación)
 routerHabits.post(
