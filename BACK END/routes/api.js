@@ -1,14 +1,11 @@
 const express = require('express');
 const path = require('path');
-const app = express();
-const port = 3000;
-
 const usersRoutes = require('./users.js');
-//const tasksRoutes = require('./tasks.js');
-//const tagsRoutes = require('./tags.js');
 const usersController = require('../controllers/users_api_controllers.js');
+
 const routerApi = express.Router();
 
+// Rutas de página
 routerApi.get('/', (req, res) => {
   const authHeader = req.headers['x-auth'];
   if (authHeader) {
@@ -37,11 +34,11 @@ routerApi.get('/mood.html', (req, res) => {
   res.sendFile(path.resolve(__dirname, '../../FRONTEND/views/mood.html'));
 });
 
-routerApi.use('/users', usersRoutes);
-//routerApi.use('/tasks', tasksRoutes);
-//routerApi.use('/tags', tagsRoutes);
-
+// Rutas de autenticación (acceden directamente a la base de datos)
 routerApi.post('/login', usersController.login);
 routerApi.post('/register', usersController.register);
+
+// Rutas de usuarios (CRUD)
+routerApi.use('/users', usersRoutes);
 
 module.exports = routerApi;

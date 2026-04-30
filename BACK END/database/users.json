@@ -1,3 +1,9 @@
 [
-    
+  {
+    "id": 1,
+    "name": "fatima velez",
+    "email": "fatima@ejemplo.com",
+    "contraseña": "hola1234",
+    "joined_at": "2026-04-30T15:41:25.527Z"
+  }
 ]
