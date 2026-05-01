@@ -33,6 +33,13 @@ try {
     console.error('❌ Error al cargar journals.js:', error.message);
 }
 
+try {
+    habitsRoutes = require('./moods.js');
+    console.log('✅ moods.js cargado');
+} catch (error) {
+    console.error('❌ Error al cargar moods.js:', error.message);
+}
+
 // RUTAS DE PÁGINAS
 routerApi.get('/', (req, res) => {
     const authHeader = req.headers['x-auth'];

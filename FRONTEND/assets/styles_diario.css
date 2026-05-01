@@ -50,6 +50,12 @@ body {
     gap: 4px;
 }
 
+.header-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
 .today-date {
     font-size: 0.72rem;
     font-weight: 400;
@@ -65,80 +71,205 @@ body {
     line-height: 1.15;
 }
 
-/* ── Card de hoy ── */
-.today-card {
-    width: 100%;
-    background: rgba(255,255,255,0.07);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 20px;
-    padding: 20px;
+/* ── Emoji Section ── */
+.emoji-section {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-}
-
-.today-card-top {
-    display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 12px;
 }
 
-.today-label {
-    font-size: 0.7rem;
-    font-weight: 700;
-    color: rgba(255,255,255,0.5);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-}
-
-.edit-btn {
-    background: transparent;
-    border: none;
-    font-size: 1rem;
-    cursor: pointer;
-    padding: 0;
-}
-
-.entry-preview {
-    font-size: 0.88rem;
-    color: rgba(255,255,255,0.85);
-    line-height: 1.6;
-    opacity: 0.4;
-}
-
-/* ── Botón + ── */
-.add-btn {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background: #6e5281;
-    border: none;
-    color: white;
-    font-size: 2rem;
-    font-weight: 300;
-    cursor: pointer;
+.emoji-rings {
+    position: relative;
+    width: 200px;
+    height: 200px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 20px rgba(110, 82, 129, 0.5);
-    transition: transform 0.2s ease;
-    align-self: flex-end;
 }
 
-.add-btn:active {
-    transform: scale(0.92);
+.ring {
+    position: absolute;
+    border: 2px solid #23a133;
+    border-radius: 50%;
+    transition: all 0.3s ease;
 }
 
-/* ── Sección de entradas pasadas ── */
-.past-section {
+.ring-1 {
+    width: 140px;
+    height: 140px;
+}
+
+.ring-2 {
+    width: 160px;
+    height: 160px;
+}
+
+.ring-3 {
+    width: 180px;
+    height: 180px;
+}
+
+.emoji-circle {
+    width: 120px;
+    height: 120px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.mood-label {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #23a133;
+    text-transform: capitalize;
+    letter-spacing: 1px;
+}
+
+/* ── Slider Section ── */
+.slider-section {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 0 20px;
+}
+
+.slider-track-wrapper {
+    width: 100%;
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.mood-slider {
+    width: 100%;
+    height: 8px;
+    border-radius: 5px;
+    background: linear-gradient(to right, #c0392b 0%, #385196 25%, #f5a623 50%, #23a133 100%);
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+}
+
+.mood-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--thumb-color, #23a133);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    transition: all 0.2s ease;
+}
+
+.mood-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+.mood-slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--thumb-color, #23a133);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    transition: all 0.2s ease;
+}
+
+.mood-slider::-moz-range-thumb:hover {
+    transform: scale(1.15);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+.mood-slider::-moz-range-track {
+    background: transparent;
+    border: none;
+}
+
+.mood-slider::-moz-range-progress {
+    background: transparent;
+}
+
+.slider-labels {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 4px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: block;
+}
+
+/* ── Botón guardar ── */
+.save-btn {
+    padding: 14px 32px;
+    background: rgba(255,255,255,0.1);
+    border: 1.5px solid rgba(255,255,255,0.3);
+    border-radius: 50px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+.save-btn:hover {
+    border-color: rgba(255,255,255,0.6);
+    background: rgba(255,255,255,0.15);
+}
+
+.save-btn:active {
+    transform: scale(0.95);
+}
+
+/* ── Toggle calendario ── */
+.toggle-calendar-btn {
+    padding: 10px 24px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 50px;
+    color: rgba(255,255,255,0.7);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+}
+
+.toggle-calendar-btn:hover {
+    border-color: rgba(255,255,255,0.6);
+    color: rgba(255,255,255,0.9);
+}
+
+/* ── Calendario ── */
+.weekly-calendar {
     width: 100%;
     display: flex;
     flex-direction: column;
     gap: 12px;
-    flex: 1;
+    padding: 20px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
 }
 
-.past-title {
+.calendar-title {
     font-size: 0.75rem;
     font-weight: 700;
     color: rgba(255,255,255,0.4);
@@ -146,181 +277,45 @@ body {
     text-transform: uppercase;
 }
 
-.entries-list {
+.week-row {
     display: flex;
-    flex-direction: column;
-    gap: 12px;
-    overflow-y: auto;
-    padding-bottom: 8px;
-}
-
-.entry-card {
-    width: 100%;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 16px;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
+    justify-content: space-around;
     gap: 8px;
 }
 
-.entry-card-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.entry-card-date {
-    font-size: 0.7rem;
-    font-weight: 600;
-    color: rgba(255,255,255,0.45);
-    text-transform: capitalize;
-}
-
-.entry-edit-btn {
-    background: transparent;
-    border: none;
-    font-size: 0.9rem;
-    cursor: pointer;
-}
-
-.entry-card-text {
-    font-size: 0.82rem;
-    color: rgba(255,255,255,0.7);
-    line-height: 1.55;
-}
-
-.no-entries {
-    font-size: 0.82rem;
-    color: rgba(255,255,255,0.3);
-    text-align: center;
-    padding: 20px 0;
-}
-
-/* ── Botón volver ── */
-.back-home-btn {
-    width: 100%;
-    padding: 14px;
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 50px;
-    background: transparent;
-    color: rgba(255,255,255,0.6);
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity 0.2s ease;
-    flex-shrink: 0;
-}
-
-.back-home-btn:active {
-    opacity: 0.6;
-}
-
-/* ════════════════════════
-   MODAL
-════════════════════════ */
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    z-index: 100;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-}
-
-.modal {
-    width: 100%;
-    max-width: 430px;
-    background: #1a1a2e;
-    border-radius: 28px 28px 0 0;
-    padding: 28px 24px 40px;
+.day-item {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 8px;
 }
 
-.modal-date {
-    font-size: 0.75rem;
+.day-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: 2px solid rgba(255,255,255,0.2);
+    transition: all 0.2s ease;
+}
+
+.day-circle.filled {
+    border-color: transparent;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.day-label {
+    font-size: 0.65rem;
     font-weight: 600;
-    color: rgba(255,255,255,0.45);
-    text-transform: capitalize;
-    letter-spacing: 1px;
-}
-
-.modal-close {
-    background: transparent;
-    border: none;
     color: rgba(255,255,255,0.5);
-    font-size: 1.1rem;
-    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.journal-textarea {
-    width: 100%;
-    height: 260px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 16px;
-    padding: 16px;
-    color: #fff;
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.9rem;
-    line-height: 1.7;
-    resize: none;
-    outline: none;
-}
-
-.journal-textarea::placeholder {
-    color: rgba(255,255,255,0.25);
-}
-
-.modal-actions {
-    display: flex;
-    gap: 12px;
-}
-
-.modal-save {
-    flex: 1;
-    padding: 14px;
-    border: none;
-    border-radius: 50px;
-    background: #6e5281;
-    color: white;
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: opacity 0.2s ease;
-}
-
-.modal-save:active {
-    opacity: 0.8;
-}
-
-.modal-delete {
-    padding: 14px 20px;
-    border: 1px solid rgba(255,80,80,0.4);
-    border-radius: 50px;
-    background: transparent;
-    color: rgba(255,100,100,0.8);
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-}
-
+/* ── Footer ── */
 .meditation-footer {
     text-align: center;
-    margin-top: 0px;
+    margin-top: 20px;
     padding-top: 12px;
     border-top: 1px solid rgba(76, 175, 80, 0.2);
     width: 100%;
@@ -337,7 +332,7 @@ body {
 }
 
 .back-btn-main {
-    margin-top: 0px;
+    margin-top: 12px;
     padding: 14px 32px;
     background: transparent;
     border: 1.5px solid rgba(76, 175, 80, 0.4);
@@ -349,6 +344,7 @@ body {
     font-family: 'Poppins', sans-serif;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    transition: all 0.2s ease;
 }
 
 .back-btn-main:hover {
@@ -357,6 +353,31 @@ body {
     color: #5FCC69;
 }
 
+/* ── Notificación ── */
+.mood-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 12px 20px;
+    background: #23a133;
+    color: white;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 200;
+}
+
+.mood-notification.show {
+    opacity: 1;
+}
+
+.mood-notification.error {
+    background: #c0392b;
+}
+
+/* ── Animación ── */
 @keyframes slideUp {
     from {
         opacity: 0;

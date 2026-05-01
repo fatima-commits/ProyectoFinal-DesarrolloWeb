@@ -76,7 +76,7 @@
     </div>
 
     <script>
-        // ── Fecha de hoy ──
+        // Fecha de hoy 
         const dateEl = document.getElementById('todayDate');
         const now = new Date();
         dateEl.textContent = now.toLocaleDateString('en-US', {
@@ -190,5 +190,9 @@
         updateMood(0);
         renderCalendar();
     </script>
+
+    <script src="../controllers/env.js"></script>
+    <script src="../controllers/moods_controller.js"></script>
+    <script src="../controllers/auth_controller.js"></script>
 </body>
 </html>
