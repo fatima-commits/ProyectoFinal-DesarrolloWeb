@@ -69,6 +69,10 @@ routerApi.get('/mood.html', (req, res) => {
     res.sendFile(path.resolve(__dirname, '../../FRONTEND/views/mood.html'));
 });
 
+routerApi.get('/mentalHealth.html', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../../FRONTEND/views/mentalHealth.html'));
+});
+
 // RUTAS DE AUTENTICACIÓN
 if (usersController) {
     if (usersController.login) {
