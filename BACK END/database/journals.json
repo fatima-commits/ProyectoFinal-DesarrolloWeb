@@ -1,16 +1,5 @@
 [
   {
-    "id": 1,
-    "title": "pene pene hhhbbhkhj",
-    "content": "pene pene hhhbbhkhj",
-    "mood": "😊",
-    "images": [],
-    "date": "2026-04-30T23:12:56.247Z",
-    "id_user": 1,
-    "createdAt": "2026-04-30T23:12:33.167Z",
-    "updatedAt": "2026-04-30T23:12:56.290Z"
-  },
-  {
     "id": 5,
     "title": "otro",
     "content": "otro",
@@ -55,5 +44,18 @@
     "id_user": 5,
     "createdAt": "2026-05-06T04:37:43.288Z",
     "updatedAt": "2026-05-06T04:37:43.288Z"
+  },
+  {
+    "id": 11,
+    "title": "Hoy fue un día lindo, me rei mucho.",
+    "content": "Hoy fue un día lindo, me rei mucho.",
+    "mood": "😊",
+    "images": [
+      "/uploads/journals/1778103820984-737316211.jpg"
+    ],
+    "date": "2026-05-06T21:43:40.868Z",
+    "id_user": 1,
+    "createdAt": "2026-05-06T21:43:40.943Z",
+    "updatedAt": "2026-05-06T21:43:40.993Z"
   }
 ]

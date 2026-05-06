@@ -41,6 +41,18 @@ routerApi.get('/settings.html', (req, res) => {
     res.sendFile(path.resolve(__dirname, '../../FRONTEND/views/settings.html'));
 });
 
+routerApi.get('/meditation.html', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../../FRONTEND/views/meditation.html'));
+});
+
+routerApi.get('/breathing.html', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../../FRONTEND/views/breathing.html'));
+});
+
+routerApi.get('/recipes.html', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../../FRONTEND/views/recipes.html'));
+});
+
 // RUTAS DE AUTENTICACIÓN
 routerApi.post('/login', usersController.login);
 routerApi.post('/register', usersController.register);

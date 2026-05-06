@@ -7,5 +7,23 @@
     "id_user": 5,
     "createdAt": "2026-05-06T04:38:43.025Z",
     "updatedAt": "2026-05-06T04:38:43.025Z"
+  },
+  {
+    "id": 2,
+    "moodValue": 62,
+    "label": "Okay",
+    "date": "2026-05-06T04:49:12.645Z",
+    "id_user": 1,
+    "createdAt": "2026-05-06T04:49:12.672Z",
+    "updatedAt": "2026-05-06T04:49:12.672Z"
+  },
+  {
+    "id": 3,
+    "moodValue": 99,
+    "label": "Happy",
+    "date": "2026-05-06T21:37:39.397Z",
+    "id_user": 1,
+    "createdAt": "2026-05-06T21:37:39.500Z",
+    "updatedAt": "2026-05-06T21:37:48.391Z"
   }
 ]
