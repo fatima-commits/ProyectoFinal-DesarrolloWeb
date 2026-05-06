@@ -1,17 +1,96 @@
 [
   {
-    "id": 1,
-    "title": "Salir a caminar",
-    "trigger": "Después de desayunar",
+    "id": 2,
+    "title": "leer mi libro",
+    "trigger": "levantarme",
+    "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "color": "purple",
+    "icon": "🧐",
+    "status": "active",
+    "id_user": 4,
+    "createdAt": "2026-05-06T00:54:52.757Z"
+  },
+  {
+    "id": 5,
+    "title": "tomar mi vitamina",
+    "trigger": "desayunar",
+    "days": [
+      5,
+      6,
+      7
+    ],
+    "color": "pink",
+    "icon": "😊",
+    "status": "active",
+    "id_user": 4,
+    "createdAt": "2026-05-06T01:00:48.471Z"
+  },
+  {
+    "id": 6,
+    "title": "hacer tarea",
+    "trigger": "comer",
     "days": [
       1,
       3,
-      5
+      4
     ],
     "color": "orange",
-    "icon": "🚴",
+    "icon": "😊",
     "status": "active",
-    "id_user": 3,
-    "createdAt": "2026-04-30T21:56:15.308Z"
+    "id_user": 4,
+    "createdAt": "2026-05-06T01:06:10.190Z"
+  },
+  {
+    "id": 8,
+    "title": "tomar mi medicamento",
+    "trigger": "Desayunar",
+    "days": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "color": "pink",
+    "icon": "😊",
+    "status": "active",
+    "id_user": 5,
+    "createdAt": "2026-05-06T04:35:40.044Z"
+  },
+  {
+    "id": 9,
+    "title": "leer mi libro",
+    "trigger": "levantarme",
+    "days": [
+      6,
+      7
+    ],
+    "color": "purple",
+    "icon": "🧐",
+    "status": "active",
+    "id_user": 5,
+    "createdAt": "2026-05-06T04:35:57.874Z"
+  },
+  {
+    "id": 10,
+    "title": "terminar este proyecto",
+    "trigger": "cenar",
+    "days": [
+      2
+    ],
+    "color": "orange",
+    "icon": "🫠",
+    "status": "active",
+    "id_user": 5,
+    "createdAt": "2026-05-06T04:36:40.819Z"
   }
 ]

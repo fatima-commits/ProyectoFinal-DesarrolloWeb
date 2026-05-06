@@ -28,7 +28,7 @@
                 <span class="avatar-edit-btn">📷</span>
             </div>
             <div class="name-wrapper">
-                <input type="text" class="name-input" value="Mariana Anguiano" readonly>
+                <input type="text" class="name-input">
                 <span class="field-hint">Tap to edit</span>
             </div>
         </div>
@@ -44,7 +44,7 @@
                     <div class="field-content">
                         <label class="field-label">Weight</label>
                         <div class="field-input-row">
-                            <input type="number" class="field-input" value="60" readonly>
+                            <input type="number" class="field-input" id="weightInput">
                             <span class="field-unit">kg</span>
                         </div>
                     </div>
@@ -55,7 +55,7 @@
                     <div class="field-content">
                         <label class="field-label">Height</label>
                         <div class="field-input-row">
-                            <input type="number" class="field-input" value="161" readonly>
+                            <input type="number" class="field-input" id="heightInput">
                             <span class="field-unit">cm</span>
                         </div>
                     </div>
@@ -69,7 +69,7 @@
                     <span class="field-icon">✉️</span>
                     <div class="field-content">
                         <label class="field-label">Email</label>
-                        <input type="email" class="field-input full" value="manguiano@gmail.com" readonly>
+                        <input type="email" class="field-input full">
                     </div>
                 </div>
                 <div class="divider"></div>
@@ -78,8 +78,11 @@
                     <div class="field-content">
                         <label class="field-label">Password</label>
                         <div class="field-input-row">
-                            <input type="password" class="field-input full" value="MaRiAn4;" readonly>
-                            <button class="toggle-pass">👁</button>
+                            <input type="password" class="field-input full">
+                            <div class="field-input-row">
+                                <input type="password" class="field-input full" id="passwordInput" value="MaRiAn4;" readonly>
+                                <button class="toggle-pass" onclick="togglePassword()">👁</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -87,10 +90,10 @@
 
         </div>
 
-        <!-- Botón guardar (solo visual, sin función) -->
-        <button class="save-btn">Guardar cambios</button>
+        <!-- Botón guardar -->
+        <button class="save-btn" onclick="saveUserChanges()">Guardar cambios</button>
 
-        <button class="logout-btn" onclick="window.location.href='login.html'">Cerrar sesión</button>
+        <button class="logout-btn" id="btnLogout">Cerrar sesión</button>
 
         <!-- Volver -->
         <div class="meditation-footer">
@@ -99,5 +102,7 @@
         </div>
     </div>
 
+    <script src="../controllers/env.js"></script>
+    <script src="../controllers/auth_controller.js"></script>
 </body>
 </html>

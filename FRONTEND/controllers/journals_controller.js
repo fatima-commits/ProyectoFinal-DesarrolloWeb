@@ -2,483 +2,10 @@
 // CONTROLADOR DE JOURNALS - FRONTEND
 // ==========================================
 
-const local_url = "http://localhost:3000/";
-
-// ==========================================
-// FUNCIONES DE CREACIÓN
-// ==========================================
-
-function createJournal(event) {
-    event.preventDefault();
-
-    const user = JSON.parse(sessionStorage.getItem('user'));
-    if (!user) {
-        showNotification("Debes iniciar sesión primero", "error");
-        window.location.href = local_url;
-        return;
-    }
-
-    const title = document.getElementById('journalTitle')?.value.trim();
-    const content = document.getElementById('journalContent')?.value.trim();
-    const mood = document.querySelector('input[name="mood"]:checked')?.value || '😊';
-    const date = document.getElementById('journalDate')?.value || new Date().toISOString().split('T')[0];
-
-    // Validaciones
-    if (!title) {
-        showNotification("El título es obligatorio", "error");
-        return;
-    }
-
-    if (!content) {
-        showNotification("El contenido es obligatorio", "error");
-        return;
-    }
-
-    if (title.length > 200) {
-        showNotification("El título no puede exceder 200 caracteres", "error");
-        return;
-    }
-
-    if (content.length > 5000) {
-        showNotification("El contenido no puede exceder 5000 caracteres", "error");
-        return;
-    }
-
-    const payload = {
-        title,
-        content,
-        mood,
-        date: new Date(date).toISOString()
-    };
-
-    fetch(local_url + 'journals', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'x-auth': user.contraseña
-        },
-        body: JSON.stringify(payload)
-    })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(err => {
-                throw new Error(err.error || 'Error al crear entrada');
-            });
-        }
-        return response.json();
-    })
-    .then(data => {
-        showNotification("¡Entrada de diario creada!", "success");
-        document.getElementById('journalForm')?.reset();
-        setTimeout(() => {
-            loadJournals();
-            switchScreen('entries-list-screen');
-        }, 1500);
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification(error.message, "error");
-    });
-}
-
-// ==========================================
-// FUNCIONES DE LECTURA
-// ==========================================
-
-function loadJournals() {
-    const user = JSON.parse(sessionStorage.getItem('user'));
-    if (!user) return;
-
-    fetch(local_url + 'journals?limit=100', {
-        method: 'GET',
-        headers: {
-            'x-auth': user.contraseña
-        }
-    })
-    .then(response => {
-        if (!response.ok) throw new Error('Error al cargar entradas');
-        return response.json();
-    })
-    .then(data => {
-        displayJournals(data.data);
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification("Error al cargar los journals", "error");
-    });
-}
-
-function displayJournals(journals) {
-    const entriesList = document.getElementById('entriesList');
-    if (!entriesList) return;
-
-    entriesList.innerHTML = '';
-
-    if (journals.length === 0) {
-        entriesList.innerHTML = '<p class="no-entries">No hay entradas aún. ¡Crea una!</p>';
-        return;
-    }
-
-    journals.forEach(journal => {
-        const entryCard = createJournalCard(journal);
-        entriesList.appendChild(entryCard);
-    });
-}
-
-function createJournalCard(journal) {
-    const card = document.createElement('div');
-    card.className = 'entry-card';
-    card.id = `journal-${journal.id}`;
-
-    const dateObj = new Date(journal.date);
-    const dateString = dateObj.toLocaleDateString('es-MX', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
-
-    const previewText = journal.content.substring(0, 100) + (journal.content.length > 100 ? '...' : '');
-    const imagesCount = journal.images.length;
-    const imagesIndicator = imagesCount > 0 ? `📷 ${imagesCount}` : '';
-
-    card.innerHTML = `
-        <div class="entry-card-top">
-            <div class="entry-card-info">
-                <span class="entry-card-date">${dateString}</span>
-                <span class="entry-card-mood">${journal.mood}</span>
-                <span class="entry-card-title">${journal.title}</span>
-                ${imagesIndicator ? `<span class="entry-card-images">${imagesIndicator}</span>` : ''}
-            </div>
-            <div class="entry-card-actions">
-                <button class="entry-edit-btn" onclick="editJournal(${journal.id})">✏️</button>
-                <button class="entry-delete-btn" onclick="deleteJournal(${journal.id})">🗑️</button>
-            </div>
-        </div>
-        <p class="entry-card-text">${previewText}</p>
-    `;
-
-    return card;
-}
-
-function loadJournalDetail(journalId) {
-    const user = JSON.parse(sessionStorage.getItem('user'));
-    if (!user) return;
-
-    fetch(local_url + `journals/${journalId}`, {
-        method: 'GET',
-        headers: {
-            'x-auth': user.contraseña
-        }
-    })
-    .then(response => {
-        if (!response.ok) throw new Error('Error al cargar la entrada');
-        return response.json();
-    })
-    .then(journal => {
-        displayJournalDetail(journal);
-        switchScreen('journal-detail');
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification("Error al cargar la entrada", "error");
-    });
-}
-
-function displayJournalDetail(journal) {
-    const detailScreen = document.getElementById('journal-detail-content');
-    if (!detailScreen) return;
-
-    const dateObj = new Date(journal.date);
-    const dateString = dateObj.toLocaleDateString('es-MX', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
-
-    let imagesHTML = '';
-    if (journal.images && journal.images.length > 0) {
-        imagesHTML = `
-            <div class="journal-images">
-                <h3>Imágenes</h3>
-                <div class="images-gallery">
-                    ${journal.images.map(img => `
-                        <div class="image-item">
-                            <img src="${img}" alt="Imagen">
-                            <button class="btn-delete-image" onclick="deleteImage(${journal.id}, '${img}')">×</button>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `;
-    }
-
-    detailScreen.innerHTML = `
-        <div class="journal-detail-header">
-            <h2>${journal.title}</h2>
-            <span class="journal-mood">${journal.mood}</span>
-            <span class="journal-date">${dateString}</span>
-        </div>
-        <div class="journal-content">
-            ${journal.content}
-        </div>
-        ${imagesHTML}
-        <div class="journal-actions">
-            <button class="btn-edit" onclick="editJournal(${journal.id})">Editar</button>
-            <label class="btn-upload">
-                Subir imagen
-                <input type="file" accept="image/*" onchange="uploadImage(event, ${journal.id})" hidden>
-            </label>
-            <button class="btn-delete" onclick="deleteJournal(${journal.id})">Eliminar entrada</button>
-        </div>
-    `;
-}
-
-// ==========================================
-// FUNCIONES DE ACTUALIZACIÓN
-// ==========================================
-
-function editJournal(journalId) {
-    const user = JSON.parse(sessionStorage.getItem('user'));
-    if (!user) return;
-
-    fetch(local_url + `journals/${journalId}`, {
-        method: 'GET',
-        headers: {
-            'x-auth': user.contraseña
-        }
-    })
-    .then(response => {
-        if (!response.ok) throw new Error('Error al cargar la entrada');
-        return response.json();
-    })
-    .then(journal => {
-        // Llenar el formulario con los datos
-        document.getElementById('journalTitle').value = journal.title;
-        document.getElementById('journalContent').value = journal.content;
-        document.getElementById('journalDate').value = journal.date.split('T')[0];
-        
-        // Seleccionar mood
-        document.querySelector(`input[value="${journal.mood}"]`).checked = true;
-
-        // Cambiar función del botón
-        const submitBtn = document.querySelector('.create-entry-btn');
-        submitBtn.textContent = 'Actualizar entrada';
-        submitBtn.onclick = () => updateJournalSubmit(journalId);
-
-        switchScreen('new-entry');
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification("Error al cargar la entrada", "error");
-    });
-}
-
-function updateJournalSubmit(journalId) {
-    const user = JSON.parse(sessionStorage.getItem('user'));
-    if (!user) return;
-
-    const title = document.getElementById('journalTitle').value.trim();
-    const content = document.getElementById('journalContent').value.trim();
-    const mood = document.querySelector('input[name="mood"]:checked').value;
-    const date = document.getElementById('journalDate').value;
-
-    if (!title || !content) {
-        showNotification("Por favor completa todos los campos", "error");
-        return;
-    }
-
-    const payload = {
-        title,
-        content,
-        mood,
-        date: new Date(date).toISOString()
-    };
-
-    fetch(local_url + `journals/${journalId}`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json',
-            'x-auth': user.contraseña
-        },
-        body: JSON.stringify(payload)
-    })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(err => {
-                throw new Error(err.error || 'Error al actualizar');
-            });
-        }
-        return response.json();
-    })
-    .then(data => {
-        showNotification("¡Entrada actualizada!", "success");
-        
-        // Restaurar botón
-        const submitBtn = document.querySelector('.create-entry-btn');
-        submitBtn.textContent = 'Crear entrada';
-        submitBtn.onclick = () => createJournal(new Event('submit'));
-
-        setTimeout(() => {
-            loadJournals();
-            switchScreen('entries-list-screen');
-        }, 1500);
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification(error.message, "error");
-    });
-}
-
-// ==========================================
-// FUNCIONES DE IMÁGENES
-// ==========================================
-
-function uploadImage(event, journalId) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const user = JSON.parse(sessionStorage.getItem('user'));
-    if (!user) {
-        showNotification("Debes iniciar sesión", "error");
-        return;
-    }
-
-    // Validar tamaño
-    if (file.size > 5 * 1024 * 1024) {
-        showNotification("La imagen no puede exceder 5MB", "error");
-        return;
-    }
-
-    // Validar tipo
-    const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    if (!validTypes.includes(file.type)) {
-        showNotification("Solo se permiten JPG, PNG, GIF y WebP", "error");
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append('image', file);
-
-    fetch(local_url + `journals/${journalId}/upload`, {
-        method: 'POST',
-        headers: {
-            'x-auth': user.contraseña
-        },
-        body: formData
-    })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(err => {
-                throw new Error(err.error || 'Error al subir imagen');
-            });
-        }
-        return response.json();
-    })
-    .then(data => {
-        showNotification("¡Imagen cargada!", "success");
-        loadJournalDetail(journalId);
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification(error.message, "error");
-    });
-}
-
-function deleteImage(journalId, imagePath) {
-    if (!confirm("¿Eliminar esta imagen?")) return;
-
-    const user = JSON.parse(sessionStorage.getItem('user'));
-    if (!user) return;
-
-    fetch(local_url + `journals/${journalId}/image`, {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-            'x-auth': user.contraseña
-        },
-        body: JSON.stringify({ imagePath })
-    })
-    .then(response => {
-        if (!response.ok) throw new Error('Error al eliminar imagen');
-        return response.json();
-    })
-    .then(data => {
-        showNotification("¡Imagen eliminada!", "success");
-        loadJournalDetail(journalId);
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification("Error al eliminar la imagen", "error");
-    });
-}
-
-// FUNCIONES DE ELIMINACIÓN
-
-function deleteJournal(journalId) {
-    if (!confirm("¿Estás seguro de que deseas eliminar esta entrada?")) return;
-
-    const user = JSON.parse(sessionStorage.getItem('user'));
-    if (!user) return;
-
-    fetch(local_url + `journals/${journalId}`, {
-        method: 'DELETE',
-        headers: {
-            'x-auth': user.contraseña
-        }
-    })
-    .then(response => {
-        if (!response.ok) throw new Error('Error al eliminar');
-        return response.json();
-    })
-    .then(data => {
-        showNotification("¡Entrada eliminada!", "success");
-        const card = document.getElementById(`journal-${journalId}`);
-        if (card) {
-            card.style.animation = 'fadeOut 0.3s ease-out';
-            setTimeout(() => card.remove(), 300);
-        }
-        loadJournals();
-        switchScreen('entries-list-screen');
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification("Error al eliminar la entrada", "error");
-    });
-}
-
-// ==========================================
-// FUNCIONES DE UTILIDAD
-// ==========================================
-
-function switchScreen(screenId) {
-    document.querySelectorAll('.screen-wrapper').forEach(screen => {
-        screen.style.display = 'none';
-    });
-
-    const selectedScreen = document.getElementById(screenId);
-    if (selectedScreen) {
-        selectedScreen.style.display = 'flex';
-    }
-}
-
-function showNotification(message, type = 'info') {
-    let notification = document.getElementById('notification');
-    if (!notification) {
-        notification = document.createElement('div');
-        notification.id = 'notification';
-        notification.className = 'notification';
-        document.body.appendChild(notification);
-    }
-
-    notification.textContent = message;
-    notification.className = `notification show ${type}`;
-
-    setTimeout(() => {
-        notification.classList.remove('show');
-    }, 3000);
-}
+const now = new Date();
+let currentEditingId = null;
+let allJournals = [];
+let selectedImageFile = null;
 
 // ==========================================
 // INICIALIZACIÓN
@@ -486,30 +13,296 @@ function showNotification(message, type = 'info') {
 
 function initJournals() {
     const user = JSON.parse(sessionStorage.getItem('user'));
-    if (!user) {
-        window.location.href = local_url;
+    if (!user) return window.location.href = local_url;
+
+    // Mostrar fecha de hoy
+    const dateEl = document.getElementById('todayDate');
+    if (dateEl) {
+        dateEl.textContent = now.toLocaleDateString('es-MX', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        });
+    }
+
+    loadJournals();
+
+    // Cerrar modal con Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+    });
+}
+
+// ==========================================
+// MODAL
+// ==========================================
+
+function openCreateModal() {
+    currentEditingId = null;
+    document.getElementById('journalInput').value = '';
+    document.getElementById('modalDeleteBtn').style.display = 'none';
+    removeImage();
+    document.getElementById('modalDate').textContent = now.toLocaleDateString('es-MX', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+    document.getElementById('journalModal').style.display = 'flex';
+    document.getElementById('journalInput').focus();
+}
+
+function openEditModal(journalId) {
+    const journal = allJournals.find(j => j.id === journalId);
+    if (!journal) return;
+
+    currentEditingId = journalId;
+    document.getElementById('journalInput').value = journal.content;
+    document.getElementById('modalDeleteBtn').style.display = 'block';
+    removeImage();
+    document.getElementById('modalDate').textContent = new Date(journal.date).toLocaleDateString('es-MX', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+
+    // Mostrar imagen actual si existe
+    const imagePreview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+    if (journal.images && journal.images.length > 0) {
+        previewImg.src = journal.images[0];
+        imagePreview.style.display = 'block';
+
+        // Cambiar botón de quitar por eliminar del servidor
+        const removeBtn = imagePreview.querySelector('button');
+        removeBtn.textContent = '✕ Eliminar imagen';
+        removeBtn.onclick = () => deleteJournalImage(journalId, journal.images[0]);
+    }
+
+    document.getElementById('journalModal').style.display = 'flex';
+    document.getElementById('journalInput').focus();
+}
+
+function deleteJournalImage(journalId, imagePath) {
+    if (!confirm('¿Eliminar esta imagen?')) return;
+
+    const password = sessionStorage.getItem('password');
+    if (!password) return;
+
+    fetch(`/journals/${journalId}/image`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'x-auth': password
+        },
+        body: JSON.stringify({ imagePath })
+    })
+    .then(res => {
+        if (!res.ok) throw new Error('Error al eliminar imagen');
+        return res.json();
+    })
+    .then(() => {
+        alert('Imagen eliminada');
+        // Actualizar allJournals localmente
+        const journal = allJournals.find(j => j.id === journalId);
+        if (journal) journal.images = [];
+        // Ocultar preview
+        document.getElementById('imagePreview').style.display = 'none';
+    })
+    .catch(err => alert('❌ Error: ' + err.message));
+}
+
+function closeModal(event) {
+    if (event && event.target.id !== 'journalModal') return;
+    document.getElementById('journalModal').style.display = 'none';
+    currentEditingId = null;
+}
+
+// ==========================================
+// IMÁGENES
+// ==========================================
+
+function previewImage(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    selectedImageFile = file;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        document.getElementById('previewImg').src = e.target.result;
+        document.getElementById('imagePreview').style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeImage() {
+    selectedImageFile = null;
+    const input = document.getElementById('imageInput');
+    const preview = document.getElementById('imagePreview');
+    if (input) input.value = '';
+    if (preview) preview.style.display = 'none';
+}
+
+
+// ==========================================
+// CRUD
+// ==========================================
+
+function saveJournal() {
+    const content = document.getElementById('journalInput').value.trim();
+
+    if (!content && !selectedImageFile) {
+        alert('Por favor escribe algo o agrega una imagen');
         return;
     }
 
-    // Cargar entradas al iniciar
-    loadJournals();
+    const password = sessionStorage.getItem('password');
+    if (!password) return window.location.href = local_url;
 
-    // Event listener para formulario
-    const form = document.getElementById('journalForm');
-    if (form) {
-        form.addEventListener('submit', createJournal);
-    }
+    const payload = {
+        title: content ? content.substring(0, 50) + (content.length > 50 ? '...' : '') : 'Sin título',
+        content: content || ' ',
+        mood: '😊',
+        date: new Date().toISOString()
+    };
 
-    // Botón de atrás
-    const backBtn = document.querySelector('.back-btn-main');
-    if (backBtn) {
-        backBtn.addEventListener('click', () => {
-            window.location.href = local_url + 'home.html';
-        });
-    }
+    const endpoint = currentEditingId ? `/journals/${currentEditingId}` : `/journals`;
+    const method = currentEditingId ? 'PATCH' : 'POST';
+
+    fetch(endpoint, {
+        method,
+        headers: {
+            'Content-Type': 'application/json',
+            'x-auth': password
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(res => {
+        if (!res.ok) return res.json().then(err => { throw new Error(err.error) });
+        return res.json();
+    })
+    .then(async data => {
+        const journalId = data.journal?.id || currentEditingId;
+
+        // Si hay imagen, subirla y esperar respuesta
+        if (selectedImageFile && journalId) {
+            const formData = new FormData();
+            formData.append('image', selectedImageFile);
+
+            const uploadRes = await fetch(`/journals/${journalId}/upload`, {
+                method: 'POST',
+                headers: { 'x-auth': password },
+                body: formData
+            });
+
+            const uploadData = await uploadRes.json();
+            console.log('Upload response:', uploadData);
+
+            if (!uploadRes.ok) {
+                throw new Error(uploadData.error || 'Error al subir imagen');
+            }
+        }
+
+        alert('¡Entrada guardada!');
+        removeImage();
+        closeModal();
+        loadJournals();
+    })
+    .catch(err => {
+        console.error('Error:', err);
+        alert('❌ Error: ' + err.message);
+    });
 }
 
-// Inicializar cuando el DOM esté listo
+function loadJournals() {
+    const password = sessionStorage.getItem('password');
+    if (!password) return;
+
+    fetch('/journals?limit=100', {
+        headers: { 'x-auth': password }
+    })
+    .then(res => {
+        if (!res.ok) throw new Error('Error al cargar entradas');
+        return res.json();
+    })
+    .then(data => {
+        allJournals = data.data;
+        displayJournals(data.data);
+    })
+    .catch(err => {
+        console.error('Error:', err);
+        document.getElementById('entriesList').innerHTML = '<p class="no-entries">❌ Error al cargar las entradas</p>';
+    });
+}
+
+function displayJournals(journals) {
+    const entriesList = document.getElementById('entriesList');
+    const todayCard = document.getElementById('todayCard');
+
+    if (journals.length === 0) {
+        entriesList.innerHTML = '<p class="no-entries">No hay entradas aún</p>';
+        if (todayCard) todayCard.style.display = 'none';
+        return;
+    }
+
+    const today = new Date().toISOString().split('T')[0];
+    const todayEntries = journals.filter(j => j.date.split('T')[0] === today);
+    
+    // Solo mostrar la MÁS RECIENTE en todayCard
+    const todayEntry = todayEntries[0];
+
+    if (todayEntry && todayCard) {
+        document.getElementById('todayPreview').textContent =
+            todayEntry.content.substring(0, 100) + (todayEntry.content.length > 100 ? '...' : '');
+        todayCard.style.display = 'flex';
+        todayCard.onclick = () => openEditModal(todayEntry.id);
+    } else if (todayCard) {
+        todayCard.style.display = 'none';
+    }
+
+    // Mostrar TODAS las demás en entradas anteriores (aunque sean del mismo dia)
+    const pastEntries = journals.filter(j => j.id !== todayEntry?.id);
+
+    if (pastEntries.length === 0) {
+        entriesList.innerHTML = '<p class="no-entries">No hay más entradas</p>';
+        return;
+    }
+
+    entriesList.innerHTML = pastEntries.map(entry => `
+    <div class="entry-card" onclick="openEditModal(${entry.id})">
+        <div class="entry-card-top">
+            <span class="entry-card-date">${new Date(entry.date).toLocaleDateString('es-MX', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+            })}</span>
+            <button class="entry-edit-btn" onclick="event.stopPropagation(); openEditModal(${entry.id})">✏️</button>
+        </div>
+        ${entry.images && entry.images.length > 0
+            ? `<img src="${entry.images[0]}" style="width:100%; border-radius:8px; margin-top:8px; object-fit:cover; max-height:150px;" onerror="this.style.display='none'">`
+            : ''}
+        <p class="entry-card-text">${entry.content.substring(0, 100)}${entry.content.length > 100 ? '...' : ''}</p>
+    </div>
+`).join('');
+}
+
+function deleteCurrentJournal() {
+    if (!confirm('¿Estás seguro de que deseas eliminar esta entrada?')) return;
+
+    const password = sessionStorage.getItem('password');
+    if (!password) return;
+
+    fetch(`/journals/${currentEditingId}`, {
+        method: 'DELETE',
+        headers: { 'x-auth': password }
+    })
+    .then(res => {
+        if (!res.ok) throw new Error('Error al eliminar');
+        return res.json();
+    })
+    .then(() => {
+        alert('Entrada eliminada');
+        closeModal();
+        loadJournals();
+    })
+    .catch(err => alert('❌ Error: ' + err.message));
+}
+
+// ==========================================
+// INICIALIZAR
+// ==========================================
+
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initJournals);
 } else {

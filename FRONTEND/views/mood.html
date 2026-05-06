@@ -32,7 +32,7 @@
                 <div class="emoji-circle" id="emojiCircle">
                     <svg id="moodFace" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="110" height="110">
                         <!-- Cara -->
-                        <circle cx="50" cy="50" r="48" fill="#f5c842" id="faceColor"/>
+                        <circle cx="50" cy="50" r="48" fill="#c0392b" id="faceColor"/>
                         <!-- Ojos -->
                         <circle cx="35" cy="40" r="5" fill="#3a2a00" id="eyeL"/>
                         <circle cx="65" cy="40" r="5" fill="#3a2a00" id="eyeR"/>
@@ -49,10 +49,10 @@
             <div class="slider-track-wrapper">
                 <input type="range" min="0" max="100" value="0" class="mood-slider" id="moodSlider">
                 <div class="slider-labels">
-                    <span class="dot" style="background:#23a133"></span>
-                    <span class="dot" style="background:#f5a623"></span>
-                    <span class="dot" style="background:#385196"></span>
                     <span class="dot" style="background:#c0392b"></span>
+                    <span class="dot" style="background:#385196"></span>
+                    <span class="dot" style="background:#f5a623"></span>
+                    <span class="dot" style="background:#23a133"></span>
                 </div>
             </div>
         </div>
@@ -75,124 +75,8 @@
         </div>
     </div>
 
-    <script>
-        // Fecha de hoy 
-        const dateEl = document.getElementById('todayDate');
-        const now = new Date();
-        dateEl.textContent = now.toLocaleDateString('en-US', {
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-        });
-
-        // ── Datos por nivel de mood ──
-        const moods = [
-            { label: 'Happy', faceColor: '#23a133', ringColor: '#23a133', mouth: 'M 30 62 Q 50 78 70 62', eyeType: 'normal' },
-            { label: 'Okay',  faceColor: '#f5a623', ringColor: '#f5a623', mouth: 'M 33 65 Q 50 68 67 65', eyeType: 'normal' },
-            { label: 'Sad',   faceColor: '#385196', ringColor: '#385196', mouth: 'M 30 70 Q 50 58 70 70', eyeType: 'sad'    },
-            { label: 'Angry', faceColor: '#c0392b', ringColor: '#c0392b', mouth: 'M 30 72 Q 50 68 67 65', eyeType: 'angry'  }
-        ];
-
-        const slider    = document.getElementById('moodSlider');
-        const faceColor = document.getElementById('faceColor');
-        const mouthPath = document.getElementById('mouthPath');
-        const moodLabel = document.getElementById('moodLabel');
-        const eyeL      = document.getElementById('eyeL');
-        const eyeR      = document.getElementById('eyeR');
-        const rings     = document.querySelectorAll('.ring');
-
-        // ── Colores de cada mood ──
-        const moodColors = {
-            Happy: '#f5c842',
-            Okay:  '#f5a623',
-            Sad:   '#e06030',
-            Angry: '#c0392b'
-        };
-
-        // ── Toggle calendario (solo muestra/oculta) ──
-        document.getElementById('toggleCalendar').addEventListener('click', () => {
-            const cal = document.getElementById('weeklyCalendar');
-            const btn = document.getElementById('toggleCalendar');
-            if (cal.style.display === 'none') {
-                cal.style.display = 'block';
-                btn.textContent = 'Ocultar semana';
-            } else {
-                cal.style.display = 'none';
-                btn.textContent = 'Ver semana';
-            }
-        });
-
-        // ── Calendario con datos hardcodeados ──
-        function renderCalendar() {
-            const weekRow = document.getElementById('weekRow');
-            weekRow.innerHTML = '';
-            const days  = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-            const today = new Date();
-
-            const ejemplos = {
-                0: 'Happy',
-                1: 'Okay',
-                2: 'Sad',
-                3: null,
-                4: 'Angry',
-                5: 'Happy',
-                6: 'Okay',
-            };
-
-            for (let i = 6; i >= 0; i--) {
-                const date  = new Date(today);
-                date.setDate(today.getDate() - i);
-                const label = days[date.getDay()];
-                const saved = ejemplos[6 - i];
-
-                const item   = document.createElement('div');
-                item.className = 'day-item';
-
-                const circle = document.createElement('div');
-                circle.className = 'day-circle' + (saved ? ' filled' : '');
-                if (saved) circle.style.background = moodColors[saved];
-
-                const dayLabel = document.createElement('span');
-                dayLabel.className = 'day-label';
-                dayLabel.textContent = label;
-
-                item.appendChild(circle);
-                item.appendChild(dayLabel);
-                weekRow.appendChild(item);
-            }
-        }
-
-        // ── Animación del emoji con el slider ──
-        function updateMood(val) {
-            const index = Math.min(3, Math.floor(val / 25));
-            const mood  = moods[index];
-
-            faceColor.setAttribute('fill', mood.faceColor);
-            mouthPath.setAttribute('d', mood.mouth);
-
-            if (mood.eyeType === 'angry') {
-                eyeL.setAttribute('cy', '43'); eyeR.setAttribute('cy', '43');
-                eyeL.setAttribute('rx', '6');  eyeR.setAttribute('rx', '6');
-                eyeL.setAttribute('ry', '4');  eyeR.setAttribute('ry', '4');
-            } else if (mood.eyeType === 'sad') {
-                eyeL.setAttribute('cy', '42'); eyeR.setAttribute('cy', '42');
-            } else {
-                eyeL.setAttribute('cy', '40'); eyeR.setAttribute('cy', '40');
-            }
-
-            rings.forEach(r => r.style.borderColor = mood.ringColor);
-            moodLabel.textContent = mood.label;
-            moodLabel.style.color = mood.faceColor;
-            document.documentElement.style.setProperty('--thumb-color', mood.faceColor);
-        }
-
-        slider.addEventListener('input', () => updateMood(slider.value));
-
-        // ── Init ──
-        updateMood(0);
-        renderCalendar();
-    </script>
-
     <script src="../controllers/env.js"></script>
-    <script src="../controllers/moods_controller.js"></script>
     <script src="../controllers/auth_controller.js"></script>
+    <script src="../controllers/moods_controller.js"></script>
 </body>
 </html>

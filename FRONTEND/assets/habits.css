@@ -153,7 +153,6 @@ body {
     padding: 16px;
     overflow-x: auto;
     background: rgba(20, 20, 20, 0.4);
-    animation: fadeInUp 0.8s ease-out 0.1s both;
 }
 
 .filter-btn {
@@ -180,7 +179,6 @@ body {
     flex: 1;
     padding: 16px;
     overflow-y: auto;
-    animation: fadeInUp 0.8s ease-out 0.2s both;
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -192,7 +190,6 @@ body {
     padding: 24px 16px;
     cursor: pointer;
     transition: var(--transition);
-    animation: scaleIn 0.6s ease-out forwards;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
     display: flex;
     flex-direction: column;
@@ -200,12 +197,6 @@ body {
     color: white;
     font-weight: 500;
 }
-
-.habit-card:nth-child(1) { animation-delay: 0.25s; }
-.habit-card:nth-child(2) { animation-delay: 0.3s; }
-.habit-card:nth-child(3) { animation-delay: 0.35s; }
-.habit-card:nth-child(4) { animation-delay: 0.4s; }
-.habit-card:nth-child(5) { animation-delay: 0.45s; }
 
 .habit-card:hover {
     transform: translateY(-6px);
@@ -436,6 +427,25 @@ body {
     color: var(--text-primary);
 }
 
+
+.day-selector {
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1.5px solid rgba(76, 175, 80, 0.3);
+    border-radius: 20px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: 'Poppins', sans-serif;
+}
+
+.day-selector.active {
+    background: rgba(76, 175, 80, 0.3);
+    border-color: rgba(76, 175, 80, 0.6);
+    color: #5FCC69;
+}
 .cancel-btn {
     background: transparent;
     border: none;
@@ -696,4 +706,72 @@ body {
     border-color: rgba(76, 175, 80, 0.8);
     background: rgba(76, 175, 80, 0.1);
     color: var(--primary-light);
+}
+
+/* BOTONES DE ACCIONES EN TARJETA */
+.habit-card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+
+.btn-small {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: none;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    transition: var(--transition);
+    backdrop-filter: blur(4px);
+}
+
+.btn-edit {
+    background: rgba(255, 255, 255, 0.25);
+    color: white;
+}
+
+.btn-edit:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.btn-delete {
+    background: rgba(220, 53, 69, 0.3);
+    color: white;
+}
+
+.btn-delete:hover {
+    background: rgba(220, 53, 69, 0.5);
+}
+
+.btn-active, .btn-paused {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-active:hover, .btn-paused:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* BADGE DE ESTADO */
+.status-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+}
+
+.status-badge.active {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+.status-badge.paused {
+    background: rgba(0, 0, 0, 0.2);
+    color: rgba(255, 255, 255, 0.7);
 }

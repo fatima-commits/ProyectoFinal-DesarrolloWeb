@@ -8,6 +8,7 @@ app.use(express.static('../FRONTEND'));
 app.use('/controllers', express.static('../FRONTEND/controllers'));
 app.use('/views', express.static('../FRONTEND/views'));
 app.use('/assets', express.static('../FRONTEND/assets'));
+app.use('/uploads', express.static('../FRONTEND/public/uploads'));
 
 app.use(router);
 

@@ -240,15 +240,6 @@ body {
     font-weight: 600;
 }
 
-.toggle-pass {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 0.9rem;
-    padding: 0;
-    margin-left: auto;
-}
-
 /* ── Botón guardar ── */
 .save-btn {
     width: 100%;
@@ -368,4 +359,31 @@ body {
 .logout-btn:hover {
     background: rgba(255, 80, 80, 0.1);
     border-color: rgba(255, 80, 80, 0.8);
+}
+
+.field-input-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+}
+
+.field-input.full {
+    width: 100%;
+    flex: 1;
+}
+
+.toggle-pass {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    color: rgba(255, 255, 255, 0.6);  /* blanco en lugar de filter */
+    padding: 0 5px;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.toggle-pass:hover {
+    color: #ffffff;
 }

@@ -19,5 +19,23 @@
     "email": "maria@example.com",
     "contraseña": "Pass234567",
     "joined_at": "2026-04-30T16:12:58.036Z"
+  },
+  {
+    "id": 4,
+    "name": "Mariana Anguiano",
+    "email": "mariana@iteso.mx",
+    "contraseña": "pass1234",
+    "joined_at": "2026-05-05T00:22:16.152Z",
+    "weight": 56,
+    "height": 110
+  },
+  {
+    "id": 5,
+    "name": "Paulina Anguiano",
+    "email": "paulina@iteso.mx",
+    "contraseña": "Paulina123",
+    "joined_at": "2026-05-06T04:34:11.710Z",
+    "weight": 56,
+    "height": 165
   }
 ]

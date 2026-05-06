@@ -2,7 +2,6 @@
 // CONTROLADOR DE HÁBITOS - FRONTEND
 // ==========================================
 
-const local_url = "http://localhost:3000/";
 const daysMap = {
     'L': 1, 'M': 2, 'X': 3, 'J': 4, 'V': 5, 'S': 6, 'D': 7
 };
@@ -11,6 +10,10 @@ const dayNames = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 // ==========================================
 // FUNCIONES DE CREACIÓN
 // ==========================================
+function selectColor(dot) {
+    document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+    dot.classList.add('active');
+}
 
 function createHabit(event) {
     event.preventDefault();
@@ -73,7 +76,7 @@ function createHabit(event) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'x-auth': user.contraseña
+            'x-auth': sessionStorage.getItem('password')
         },
         body: JSON.stringify(payload)
     })
@@ -86,7 +89,7 @@ function createHabit(event) {
         return response.json();
     })
     .then(data => {
-        showNotification("¡Hábito creado correctamente!", "success");
+        alert("¡Hábito creado correctamente!");
         
         // Limpiar formulario
         document.getElementById('habitForm')?.reset();
@@ -111,47 +114,41 @@ function loadHabits(day = null) {
     const user = JSON.parse(sessionStorage.getItem('user'));
     if (!user) return;
 
-    let url = local_url + 'habits?limit=100';
-    
-    // Si se especifica un día, filtrar por ese día
-    if (day) {
-        url += `&day=${day}`;
-    }
+    let url = '/habits?limit=100';
+    if (day) url += `&day=${day}`;
 
     fetch(url, {
-        method: 'GET',
-        headers: {
-            'x-auth': user.contraseña
-        }
+        headers: { 'x-auth': sessionStorage.getItem('password') }
     })
-    .then(response => {
-        if (!response.ok) throw new Error('Error al cargar hábitos');
-        return response.json();
+    .then(res => {
+        if (!res.ok) throw new Error('Error al cargar hábitos');
+        return res.json();
     })
     .then(data => {
-        displayHabits(data.data);
+        //Aqui quito la animacion cada que filtras, solo se pone en todos
+        displayHabits(data.data, !day);
     })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification("Error al cargar los hábitos", "error");
-    });
+    .catch(err => showNotification(err.message, "error"));
 }
 
-function displayHabits(habits) {
-    const habitsList = document.getElementById('habitsList');
-    if (!habitsList) return;
+function displayHabits(habits, animated = false) {
+    const list = document.getElementById('habitsList');
+    if (!list) return;
 
-    // Limpiar
-    habitsList.innerHTML = '';
+    list.innerHTML = '';
 
     if (habits.length === 0) {
-        habitsList.innerHTML = '<p class="no-habits">No hay hábitos creados aún.</p>';
+        list.innerHTML = '<p class="no-habits">No hay hábitos creados aún.</p>';
         return;
     }
 
-    habits.forEach(habit => {
-        const habitCard = createHabitCard(habit);
-        habitsList.appendChild(habitCard);
+    habits.forEach((habit, index) => {
+        const card = createHabitCard(habit);
+        if (animated) {
+            card.style.animation = `scaleIn 0.6s ease-out ${0.25 + index * 0.05}s forwards`;
+            card.style.opacity = '0';
+        }
+        list.appendChild(card);
     });
 }
 
@@ -194,120 +191,71 @@ function createHabitCard(habit) {
 // ==========================================
 
 function editHabit(habitId) {
-    const user = JSON.parse(sessionStorage.getItem('user'));
-    if (!user) return;
-
-    fetch(local_url + `habits/${habitId}`, {
-        method: 'GET',
-        headers: {
-            'x-auth': user.contraseña
-        }
+    fetch(`/habits/${habitId}`, {
+        headers: { 'x-auth': sessionStorage.getItem('password') }
     })
-    .then(response => {
-        if (!response.ok) throw new Error('Error al cargar el hábito');
-        return response.json();
-    })
+    .then(res => res.json())
     .then(habit => {
-        // Llenar el formulario con los datos del hábito
-        document.getElementById('habitTitle').value = habit.title;
+        document.getElementById('habitTitle').value   = habit.title;
         document.getElementById('habitTrigger').value = habit.trigger;
-        document.getElementById('habitIcon').value = habit.icon;
+        document.getElementById('habitIcon').value    = habit.icon;
 
-        // Seleccionar color
         document.querySelectorAll('.color-dot').forEach(dot => {
-            dot.classList.remove('active');
-            if (dot.getAttribute('data-color') === habit.color) {
-                dot.classList.add('active');
-            }
+            dot.classList.toggle('active', dot.getAttribute('data-color') === habit.color);
         });
 
-        // Seleccionar días
         document.querySelectorAll('.day-selector').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        
-        habit.days.forEach(day => {
-            const dayBtn = document.querySelector(`.day-selector[data-day="${day}"]`);
-            if (dayBtn) dayBtn.classList.add('active');
+            btn.classList.toggle('active', habit.days.includes(Number(btn.getAttribute('data-day'))));
         });
 
-        // Cambiar función del botón
+        // ← Cambiar tipo del botón a 'button' para que no dispare submit
         const submitBtn = document.querySelector('.create-habit-btn');
         submitBtn.textContent = 'Actualizar hábito';
+        submitBtn.type = 'button';
         submitBtn.onclick = () => updateHabitSubmit(habitId);
 
-        // Mostrar pantalla de edición
         switchScreen('new-habit');
     })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification("Error al cargar el hábito", "error");
-    });
+    .catch(() => showNotification("Error al cargar el hábito", "error"));
 }
 
 function updateHabitSubmit(habitId) {
-    const event = new Event('submit');
-    
-    const user = JSON.parse(sessionStorage.getItem('user'));
-    if (!user) {
-        alert("Debes iniciar sesión primero");
-        return;
-    }
-
-    const title = document.getElementById('habitTitle').value.trim();
+    const title   = document.getElementById('habitTitle').value.trim();
     const trigger = document.getElementById('habitTrigger').value.trim();
-    const icon = document.getElementById('habitIcon').value.trim();
-    
-    const dayButtons = document.querySelectorAll('.day-selector.active');
-    const days = Array.from(dayButtons).map(btn => {
-        const dayText = btn.textContent.trim();
-        return daysMap[dayText] || parseInt(dayText);
-    });
+    const icon    = document.getElementById('habitIcon').value.trim();
+    const days    = Array.from(document.querySelectorAll('.day-selector.active'))
+                        .map(btn => Number(btn.getAttribute('data-day')));
+    const color   = document.querySelector('.color-dot.active')?.getAttribute('data-color') || 'orange';
 
-    const colorDot = document.querySelector('.color-dot.active');
-    const color = colorDot?.getAttribute('data-color') || 'orange';
-
-    if (!title || !trigger || days.length === 0 || !icon) {
-        showNotification("Por favor completa todos los campos", "error");
-        return;
+    if (!title || !trigger || !icon || days.length === 0) {
+        return showNotification("Completa todos los campos", "error");
     }
 
-    const payload = { title, trigger, days, color, icon };
-
-    fetch(local_url + `habits/${habitId}`, {
+    fetch(`/habits/${habitId}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
-            'x-auth': user.contraseña
+            'x-auth': sessionStorage.getItem('password')
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({ title, trigger, days, color, icon })
     })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(err => {
-                throw new Error(err.error || 'Error al actualizar');
-            });
-        }
-        return response.json();
+    .then(res => {
+        if (!res.ok) return res.json().then(err => { throw new Error(err.error) });
+        return res.json();
     })
-    .then(data => {
-        showNotification("¡Hábito actualizado!", "success");
-        
-        // Restaurar botón
+    .then(() => {
+        switchScreen('all-habits');
+        loadHabits();
+
+        // ← Regresar el botón a su estado original
         const submitBtn = document.querySelector('.create-habit-btn');
         submitBtn.textContent = 'Crear nuevo hábito';
-        submitBtn.onclick = () => createHabit(new Event('submit'));
+        submitBtn.type = 'submit';
+        submitBtn.onclick = null;
 
-        // Recargar
-        setTimeout(() => {
-            loadHabits();
-            switchScreen('all-habits');
-        }, 1500);
+        alert("¡Hábito actualizado correctamente!");
     })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification(error.message, "error");
-    });
+    .catch(err => showNotification(err.message || "Error al actualizar", "error"));
 }
 
 function toggleHabitStatus(habitId) {
@@ -318,7 +266,7 @@ function toggleHabitStatus(habitId) {
     fetch(local_url + `habits/${habitId}`, {
         method: 'GET',
         headers: {
-            'x-auth': user.contraseña
+            'x-auth': sessionStorage.getItem('password')
         }
     })
     .then(response => response.json())
@@ -329,7 +277,7 @@ function toggleHabitStatus(habitId) {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
-                'x-auth': user.contraseña
+                'x-auth': sessionStorage.getItem('password')
             },
             body: JSON.stringify({ status: newStatus })
         });
@@ -339,7 +287,6 @@ function toggleHabitStatus(habitId) {
         return response.json();
     })
     .then(data => {
-        showNotification("Estado del hábito actualizado", "success");
         loadHabits();
     })
     .catch(error => {
@@ -363,7 +310,7 @@ function deleteHabit(habitId) {
     fetch(local_url + `habits/${habitId}`, {
         method: 'DELETE',
         headers: {
-            'x-auth': user.contraseña
+            'x-auth': sessionStorage.getItem('password')
         }
     })
     .then(response => {
@@ -428,28 +375,20 @@ function formatDays(days) {
 
 function initHabits() {
     const user = JSON.parse(sessionStorage.getItem('user'));
-    if (!user) {
-        window.location.href = local_url;
-        return;
-    }
+    if (!user) return window.location.href = local_url;
 
-    // Cargar hábitos
     loadHabits();
 
-    // Event listeners para el formulario
+    // ← Usamos una función nombrada para poder removerla después
     const form = document.getElementById('habitForm');
     if (form) {
         form.addEventListener('submit', createHabit);
     }
 
-    // Event listeners para días
     document.querySelectorAll('.day-selector').forEach(btn => {
-        btn.addEventListener('click', function() {
-            this.classList.toggle('active');
-        });
+        btn.addEventListener('click', function() { this.classList.toggle('active'); });
     });
 
-    // Event listeners para colores
     document.querySelectorAll('.color-dot').forEach(dot => {
         dot.addEventListener('click', function() {
             document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
@@ -457,20 +396,23 @@ function initHabits() {
         });
     });
 
-    // Botón de atrás
     const backBtn = document.querySelector('.back-btn-main');
-    if (backBtn) {
-        backBtn.addEventListener('click', goBack);
-    }
+    if (backBtn) backBtn.addEventListener('click', goBack);
+
+    const btnNuevo = document.getElementById('btnNuevoHabito');
+    if (btnNuevo) btnNuevo.addEventListener('click', () => switchScreen('new-habit'));
+}
+
+//Ver habitos de hoy
+function loadToday() {
+    const jsDay = new Date().getDay();
+    const todayMap = { 0: 7, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6 };
+    const today = todayMap[jsDay];
+    loadHabits(today);
 }
 
 function goBack() {
     window.location.href = local_url + 'home.html';
 }
 
-// Inicializar cuando el DOM esté listo
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initHabits);
-} else {
-    initHabits();
-}
+document.addEventListener('DOMContentLoaded', initHabits);

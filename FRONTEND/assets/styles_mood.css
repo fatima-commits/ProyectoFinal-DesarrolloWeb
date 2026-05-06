@@ -8,6 +8,7 @@
     padding: 0;
 }
 
+
 html, body {
     width: 100%;
     height: 100%;
@@ -122,12 +123,34 @@ body {
 
 
 .mood-slider {
+    direction: ltr;
     appearance: none;
     width: 100%;
     height: 8px;
     border-radius: 8px;
     background: rgba(255,255,255,0.15);
     outline: none;
+    cursor: pointer;
+}
+
+.mood-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--thumb-color, #23a133);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    transition: all 0.2s ease;
+}
+
+.mood-slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--thumb-color, #23a133);
+    border: none;
     cursor: pointer;
 }
 

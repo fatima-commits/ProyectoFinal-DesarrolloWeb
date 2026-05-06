@@ -9,5 +9,51 @@
     "id_user": 1,
     "createdAt": "2026-04-30T23:12:33.167Z",
     "updatedAt": "2026-04-30T23:12:56.290Z"
+  },
+  {
+    "id": 5,
+    "title": "otro",
+    "content": "otro",
+    "mood": "😊",
+    "images": [],
+    "date": "2026-05-06T03:51:04.314Z",
+    "id_user": 4,
+    "createdAt": "2026-05-06T03:51:04.385Z",
+    "updatedAt": "2026-05-06T03:51:04.385Z"
+  },
+  {
+    "id": 8,
+    "title": "hola",
+    "content": "hola",
+    "mood": "😊",
+    "images": [
+      "/uploads/journals/1778040938488-829430736.png"
+    ],
+    "date": "2026-05-06T04:16:02.322Z",
+    "id_user": 4,
+    "createdAt": "2026-05-06T04:03:27.799Z",
+    "updatedAt": "2026-05-06T04:16:02.388Z"
+  },
+  {
+    "id": 9,
+    "title": "imagen",
+    "content": "imagen",
+    "mood": "😊",
+    "images": [],
+    "date": "2026-05-06T04:15:51.806Z",
+    "id_user": 4,
+    "createdAt": "2026-05-06T04:04:32.142Z",
+    "updatedAt": "2026-05-06T04:15:51.883Z"
+  },
+  {
+    "id": 10,
+    "title": "Estuvo super cabron este proyecto",
+    "content": "Estuvo super cabron este proyecto",
+    "mood": "😊",
+    "images": [],
+    "date": "2026-05-06T04:37:43.204Z",
+    "id_user": 5,
+    "createdAt": "2026-05-06T04:37:43.288Z",
+    "updatedAt": "2026-05-06T04:37:43.288Z"
   }
 ]

@@ -91,3 +91,12 @@ body {
 .circle-mood         { background-color: #db7725; }
 .circle-diario       { background-color: #38816b; }
 .circle-ajustes      { background-color: #1a5c28; }
+
+.toggle-pass {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 22px;
+    filter: brightness(0) invert(1); /* lo hace blanco */
+    padding: 0 5px;
+}

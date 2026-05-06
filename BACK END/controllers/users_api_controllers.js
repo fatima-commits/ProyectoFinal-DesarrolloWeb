@@ -185,40 +185,36 @@ const getUser = (req, res) => {
 const updateUser = (req, res) => {
     try {
         const userId = parseInt(req.params.id);
-        const { name, email, password } = req.body;
+        const { name, email, password, weight, height } = req.body; // ← agrega weight y height
 
-        // Validar que se envíe al menos un campo
-        if (!name && !email && !password) {
-            return res.status(400).json({ error: 'Debe enviar al menos un campo para actualizar' });
+        if (!name && !email && !password && !weight && !height) {
+            return res.status(400).json({ error: 'Debe enviar al menos un campo' });
         }
 
-        // Leer usuarios
         let users = readUsers();
         const userIndex = users.findIndex(u => u.id === userId);
-        
+
         if (userIndex === -1) {
             return res.status(404).json({ error: 'Usuario no encontrado' });
         }
 
-        // Actualizar campos
-        if (name && name.trim() !== '') users[userIndex].name = name;
-        if (email && email.trim() !== '') users[userIndex].email = email;
+        if (name && name.trim() !== '')       users[userIndex].name       = name;
+        if (email && email.trim() !== '')     users[userIndex].email      = email;
         if (password && password.length >= 8) users[userIndex].contraseña = password;
+        if (weight)                           users[userIndex].weight     = Number(weight);
+        if (height)                           users[userIndex].height     = Number(height);
 
-        // Guardar cambios
         writeUsers(users);
 
-        // Devolver usuario actualizado sin contraseña
         const { contraseña, ...userWithoutPassword } = users[userIndex];
-        
+
         res.json({
             message: 'Usuario actualizado exitosamente',
             user: userWithoutPassword
         });
 
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Error interno del servidor: ' + err.message });
+        res.status(500).json({ error: err.message });
     }
 };
 
