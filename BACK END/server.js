@@ -1,5 +1,7 @@
 const express= require('express');
 const router = require('./routes/api.js');
+require('./database/connection');
+
 const app=express();
 const port = 3000;
 

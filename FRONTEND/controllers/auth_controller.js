@@ -88,7 +88,7 @@ function saveUserChanges() {
         return;
     }
 
-    fetch(`/users/${user.id}`, {
+    fetch(`/users/${user._id}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
@@ -125,7 +125,7 @@ function confirmDelete() {
 function deleteUser() {
     let user = JSON.parse(sessionStorage.getItem('user'));
 
-    fetch(`/users/${user.id}`, {
+    fetch(`/users/${user._id}`, {
         method: 'DELETE',
         headers: {
             'x-auth': sessionStorage.getItem('password')

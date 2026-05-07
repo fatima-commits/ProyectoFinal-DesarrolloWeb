@@ -155,7 +155,7 @@ function displayHabits(habits, animated = false) {
 function createHabitCard(habit) {
     const card = document.createElement('div');
     card.className = `habit-card ${habit.color}-bg`;
-    card.id = `habit-${habit.id}`;
+    card.id = `habit-${habit._id}`;
 
     const daysDisplay = habit.days.map(d => dayNames[d - 1]).join(' ');
     const statusBadge = habit.status === 'active' ? 
@@ -163,25 +163,25 @@ function createHabitCard(habit) {
         '<span class="status-badge paused">Pausado</span>';
 
     card.innerHTML = `
-        <div class="habit-card-header">
-            <span class="habit-card-icon">${habit.icon}</span>
-            ${statusBadge}
-        </div>
-        <div class="habit-card-content">
-            <h3 class="habit-card-title">${habit.title}</h3>
-            <p class="habit-card-subtitle">${habit.trigger}</p>
-        </div>
-        <div class="habit-card-days">
-            ${habit.days.map(day => `<span class="day-badge">${dayNames[day - 1]}</span>`).join('')}
-        </div>
-        <div class="habit-card-actions">
-            <button class="btn-small btn-edit" onclick="editHabit(${habit.id})">Editar</button>
-            <button class="btn-small btn-delete" onclick="deleteHabit(${habit.id})">Eliminar</button>
-            <button class="btn-small btn-${habit.status}" onclick="toggleHabitStatus(${habit.id})">
-                ${habit.status === 'active' ? 'Pausar' : 'Reactivar'}
-            </button>
-        </div>
-    `;
+    <div class="habit-card-header">
+        <span class="habit-card-icon">${habit.icon}</span>
+        <span class="status-badge ${habit.status}">${habit.status === 'active' ? 'Activo' : 'Pausado'}</span>
+    </div>
+    <div class="habit-card-content">
+        <h3 class="habit-card-title">${habit.title}</h3>
+        <p class="habit-card-subtitle">${habit.trigger}</p>
+    </div>
+    <div class="habit-card-days">
+        ${habit.days.map(d => `<span class="day-badge">${dayNames[d-1]}</span>`).join('')}
+    </div>
+    <div class="habit-card-actions">
+        <button class="btn-small btn-edit"   onclick="editHabit(\`${habit._id}\`)">Editar</button>
+        <button class="btn-small btn-delete" onclick="deleteHabit(\`${habit._id}\`)">Eliminar</button>
+        <button class="btn-small"            onclick="toggleHabitStatus(\`${habit._id}\`)">
+            ${habit.status === 'active' ? 'Pausar' : 'Reactivar'}
+        </button>
+    </div>
+`;
 
     return card;
 }

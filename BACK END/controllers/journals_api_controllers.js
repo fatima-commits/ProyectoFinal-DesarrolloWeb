@@ -1,315 +1,185 @@
-const fs = require('fs');
+const Journal = require('../models/journal');
+const User = require('../models/user');
 const path = require('path');
-const { Journal, JournalException, journals } = require('../models/journal');
+const fs = require('fs');
 
-// Leer usuarios dinámicamente
-function getUsers() {
-    try {
-        return JSON.parse(
-            fs.readFileSync(path.join(__dirname, '../database/users.json'), 'utf-8')
-        );
-    } catch (error) {
-        return [];
-    }
-}
-
-// ==========================================
-// FUNCIONES DE CREACIÓN
-// ==========================================
-
-exports.createJournal = function(req, res) {
+exports.authUserMiddleware = async function(req, res, next) {
     const auth = req.headers['x-auth'];
     if (!auth) return res.status(401).json({ error: "Acceso no autorizado" });
 
-    const users = getUsers();
-    let user = users.find(u => u.contraseña === auth);
-    if (!user) return res.status(401).json({ error: "Usuario no encontrado" });
-
-    const { title, content, mood, date } = req.body;
-
-    // Validaciones
-    if (!title) return res.status(400).json({ error: "El título es obligatorio" });
-    if (!content) return res.status(400).json({ error: "El contenido es obligatorio" });
-
-    let newJournal;
-    try {
-        newJournal = new Journal(title, content, user.id, mood || '😊', [], date || new Date());
-    } catch (error) {
-        return res.status(400).json({ error: error.errorMessage });
-    }
-
-    journals.push(newJournal.toObj());
-    fs.writeFileSync(
-        path.join(__dirname, '../database/journals.json'),
-        JSON.stringify(journals, null, 2),
-        'utf-8'
-    );
-
-    res.status(201).json({
-        message: "¡Entrada de diario creada exitosamente!",
-        journal: newJournal.toObj()
-    });
-};
-
-// ==========================================
-// FUNCIONES DE LECTURA
-// ==========================================
-
-exports.authUserMiddleware = function(req, res, next) {
-    const auth = req.headers['x-auth'];
-    if (!auth) return res.status(401).json({ error: "Acceso no autorizado" });
-
-    const users = getUsers();
-    let user = users.find(u => u.contraseña === auth);
+    const user = await User.findOne({ contraseña: auth });
     if (!user) return res.status(401).json({ error: "Usuario no encontrado" });
 
     req.user = user;
     next();
 };
 
-exports.authJournalsMiddleware = function(req, res, next) {
+exports.authJournalsMiddleware = async function(req, res, next) {
     const auth = req.headers['x-auth'];
-    const id_journal = req.params.id;
-
     if (!auth) return res.status(401).json({ error: "Acceso no autorizado" });
 
-    let journal = journals.find(j => j.id === Number(id_journal));
-    if (!journal) return res.status(404).json({ error: "Entrada de diario no encontrada" });
+    const journal = await Journal.findById(req.params.id);
+    if (!journal) return res.status(404).json({ error: "Entrada no encontrada" });
 
-    const users = getUsers();
-    let user = users.find(u => u.id === journal.id_user);
-    if (auth !== user.contraseña) return res.status(401).json({ error: "Contraseña incorrecta" });
+    const user = await User.findOne({ contraseña: auth });
+    if (!user) return res.status(401).json({ error: "Usuario no encontrado" });
+
+    if (journal.id_user.toString() !== user._id.toString())
+        return res.status(401).json({ error: "No tienes permiso" });
 
     req.journal = journal;
     next();
 };
 
-exports.getAllJournals = function(req, res) {
-    let userJournals = journals.filter(journal => journal.id_user === req.user.id);
+exports.createJournal = async function(req, res) {
+    const auth = req.headers['x-auth'];
+    if (!auth) return res.status(401).json({ error: "Acceso no autorizado" });
 
-    // Filtrar por rango de fechas
-    if (req.query.startDate && req.query.endDate) {
-        const startDate = new Date(req.query.startDate);
-        const endDate = new Date(req.query.endDate);
-        userJournals = userJournals.filter(journal => {
-            const journalDate = new Date(journal.date);
-            return journalDate >= startDate && journalDate <= endDate;
+    const user = await User.findOne({ contraseña: auth });
+    if (!user) return res.status(401).json({ error: "Usuario no encontrado" });
+
+    const { title, content, mood, date } = req.body;
+
+    if (!title) return res.status(400).json({ error: "El título es obligatorio" });
+    if (!content) return res.status(400).json({ error: "El contenido es obligatorio" });
+
+    try {
+        const newJournal = await Journal.create({
+            title, content,
+            mood: mood || '😊',
+            images: [],
+            date: date || new Date(),
+            id_user: user._id
         });
+
+        res.status(201).json({ message: "¡Entrada creada!", journal: newJournal });
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+};
+
+exports.getAllJournals = async function(req, res) {
+    const filter = { id_user: req.user._id };
+
+    if (req.query.startDate && req.query.endDate) {
+        filter.date = {
+            $gte: new Date(req.query.startDate),
+            $lte: new Date(req.query.endDate)
+        };
     }
 
-    // Filtrar por mood
-    if (req.query.mood) {
-        userJournals = userJournals.filter(journal => journal.mood === req.query.mood);
-    }
+    if (req.query.mood) filter.mood = req.query.mood;
 
-    // Ordenar por fecha descendente (más reciente primero)
-    userJournals.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-    // Paginación
     const page = Number(req.query.page || 1);
     const limit = Number(req.query.limit || 10);
-    const total = userJournals.length;
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
+    const skip = (page - 1) * limit;
 
-    const data = userJournals.slice(startIndex, endIndex);
-    const next_page = endIndex < total ? page + 1 : null;
+    const total = await Journal.countDocuments(filter);
+    const data = await Journal.find(filter).sort({ date: -1 }).skip(skip).limit(limit);
+    const next_page = skip + limit < total ? page + 1 : null;
 
-    res.status(200).json({ 
-        page, 
-        next_page, 
-        limit, 
-        total, 
-        data 
-    });
+    res.status(200).json({ page, next_page, limit, total, data });
 };
 
 exports.getJournal = function(req, res) {
     res.status(200).json(req.journal);
 };
 
-exports.getJournalsByDate = function(req, res) {
+exports.getJournalsByDate = async function(req, res) {
     const date = req.query.date;
-    if (!date) {
-        return res.status(400).json({ error: "Se requiere parámetro 'date'" });
-    }
+    if (!date) return res.status(400).json({ error: "Se requiere parámetro 'date'" });
 
-    const targetDate = new Date(date).toISOString().split('T')[0];
-    const userJournals = journals.filter(j => 
-        j.id_user === req.user.id && 
-        j.date.split('T')[0] === targetDate
-    );
+    const start = new Date(date);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(date);
+    end.setHours(23, 59, 59, 999);
 
-    res.status(200).json(userJournals);
+    const journals = await Journal.find({
+        id_user: req.user._id,
+        date: { $gte: start, $lte: end }
+    });
+
+    res.status(200).json(journals);
 };
 
-// ==========================================
-// FUNCIONES DE ACTUALIZACIÓN
-// ==========================================
-
-exports.updateJournal = function(req, res) {
+exports.updateJournal = async function(req, res) {
     const { title, content, mood, date } = req.body;
 
-    // Validar que al menos un campo sea enviado
-    if (!title && !content && !mood && !date) {
-        return res.status(400).json({ 
-            error: "Debes enviar al menos un campo para actualizar" 
-        });
-    }
+    if (!title && !content && !mood && !date)
+        return res.status(400).json({ error: "Debes enviar al menos un campo" });
 
-    let journal = req.journal;
-    const journalIndex = journals.findIndex(j => j.id === journal.id);
+    const updates = {};
+    if (title) updates.title = title;
+    if (content) updates.content = content;
+    if (mood) updates.mood = mood;
+    if (date) updates.date = date;
 
     try {
-        if (title) journals[journalIndex].title = title;
-        if (content) journals[journalIndex].content = content;
-        if (mood) journals[journalIndex].mood = mood;
-        if (date) journals[journalIndex].date = date;
-        journals[journalIndex].updatedAt = new Date().toISOString();
-    } catch (error) {
-        return res.status(400).json({ error: error.errorMessage });
+        const updated = await Journal.findByIdAndUpdate(
+            req.journal._id,
+            updates,
+            { new: true, runValidators: true }
+        );
+
+        res.status(200).json({ message: "¡Entrada actualizada!", journal: updated });
+    } catch (err) {
+        res.status(400).json({ error: err.message });
     }
-
-    fs.writeFileSync(
-        path.join(__dirname, '../database/journals.json'),
-        JSON.stringify(journals, null, 2),
-        'utf-8'
-    );
-
-    res.status(200).json({ 
-        message: "¡Entrada de diario actualizada correctamente!",
-        journal: journals[journalIndex]
-    });
 };
 
-// ==========================================
-// FUNCIONES DE IMÁGENES
-// ==========================================
-
-exports.uploadImage = function(req, res) {
+exports.uploadImage = async function(req, res) {
     const auth = req.headers['x-auth'];
-    const journalId = req.params.id;
-
     if (!auth) return res.status(401).json({ error: "Acceso no autorizado" });
     if (!req.file) return res.status(400).json({ error: "No se subió ningún archivo" });
 
-    const users = getUsers();
-    let user = users.find(u => u.contraseña === auth);
+    const user = await User.findOne({ contraseña: auth });
     if (!user) return res.status(401).json({ error: "Usuario no encontrado" });
 
-    // Encontrar la entrada de diario
-    let journal = journals.find(j => j.id === Number(journalId));
-    if (!journal) return res.status(404).json({ error: "Entrada de diario no encontrada" });
+    const journal = await Journal.findById(req.params.id);
+    if (!journal) return res.status(404).json({ error: "Entrada no encontrada" });
 
-    // Verificar que el usuario es propietario
-    if (journal.id_user !== user.id) {
-        return res.status(401).json({ error: "No tienes permiso para modificar esta entrada" });
-    }
+    if (journal.id_user.toString() !== user._id.toString())
+        return res.status(401).json({ error: "No tienes permiso" });
 
-    // Verificar límite de imágenes
-    if (journal.images.length >= 10) {
-        return res.status(400).json({ error: "Máximo 10 imágenes por entrada" });
-    }
+    if (journal.images.length >= 10)
+        return res.status(400).json({ error: "Máximo 10 imágenes" });
 
-    // Construir ruta de la imagen
     const imagePath = `/uploads/journals/${req.file.filename}`;
-    
-    // Agregar imagen a la entrada
-    const journalIndex = journals.findIndex(j => j.id === Number(journalId));
-    journals[journalIndex].images.push(imagePath);
-    journals[journalIndex].updatedAt = new Date().toISOString();
-
-    fs.writeFileSync(
-        path.join(__dirname, '../database/journals.json'),
-        JSON.stringify(journals, null, 2),
-        'utf-8'
+    const updated = await Journal.findByIdAndUpdate(
+        journal._id,
+        { $push: { images: imagePath } },
+        { new: true }
     );
 
-    res.status(200).json({
-        message: "¡Imagen cargada exitosamente!",
-        image: imagePath,
-        journal: journals[journalIndex]
-    });
+    res.status(200).json({ message: "¡Imagen cargada!", image: imagePath, journal: updated });
 };
 
-exports.deleteImage = function(req, res) {
+exports.deleteImage = async function(req, res) {
     const auth = req.headers['x-auth'];
-    const journalId = req.params.id;
-    const imagePath = req.body.imagePath;
-
     if (!auth) return res.status(401).json({ error: "Acceso no autorizado" });
+
+    const { imagePath } = req.body;
     if (!imagePath) return res.status(400).json({ error: "Se requiere 'imagePath'" });
 
-    const users = getUsers();
-    let user = users.find(u => u.contraseña === auth);
+    const user = await User.findOne({ contraseña: auth });
     if (!user) return res.status(401).json({ error: "Usuario no encontrado" });
 
-    // Encontrar la entrada de diario
-    let journal = journals.find(j => j.id === Number(journalId));
-    if (!journal) return res.status(404).json({ error: "Entrada de diario no encontrada" });
+    const journal = await Journal.findById(req.params.id);
+    if (!journal) return res.status(404).json({ error: "Entrada no encontrada" });
 
-    // Verificar que el usuario es propietario
-    if (journal.id_user !== user.id) {
-        return res.status(401).json({ error: "No tienes permiso para modificar esta entrada" });
-    }
+    if (journal.id_user.toString() !== user._id.toString())
+        return res.status(401).json({ error: "No tienes permiso" });
 
-    const journalIndex = journals.findIndex(j => j.id === Number(journalId));
-    const imageIndex = journals[journalIndex].images.indexOf(imagePath);
-
-    if (imageIndex === -1) {
-        return res.status(404).json({ error: "Imagen no encontrada en esta entrada" });
-    }
-
-    // Eliminar archivo físico si existe
-    const fileFullPath = path.join(__dirname, `../../FRONTEND/public${imagePath}`);
-    if (fs.existsSync(fileFullPath)) {
-        fs.unlinkSync(fileFullPath);
-    }
-
-    // Eliminar referencia de la BD
-    journals[journalIndex].images.splice(imageIndex, 1);
-    journals[journalIndex].updatedAt = new Date().toISOString();
-
-    fs.writeFileSync(
-        path.join(__dirname, '../database/journals.json'),
-        JSON.stringify(journals, null, 2),
-        'utf-8'
+    const updated = await Journal.findByIdAndUpdate(
+        journal._id,
+        { $pull: { images: imagePath } },
+        { new: true }
     );
 
-    res.status(200).json({
-        message: "¡Imagen eliminada correctamente!",
-        journal: journals[journalIndex]
-    });
+    res.status(200).json({ message: "¡Imagen eliminada!", journal: updated });
 };
 
-// ==========================================
-// FUNCIONES DE ELIMINACIÓN
-// ==========================================
-
-exports.deleteJournal = function(req, res) {
-    let journal = req.journal;
-    const index = journals.findIndex(j => j.id === journal.id);
-    
-    if (index !== -1) {
-        // Eliminar imágenes asociadas
-        journal.images.forEach(imagePath => {
-            const fileFullPath = path.join(__dirname, `../../FRONTEND/public${imagePath}`);
-            if (fs.existsSync(fileFullPath)) {
-                fs.unlinkSync(fileFullPath);
-            }
-        });
-
-        journals.splice(index, 1);
-    }
-
-    fs.writeFileSync(
-        path.join(__dirname, '../database/journals.json'),
-        JSON.stringify(journals, null, 2),
-        'utf-8'
-    );
-
-    res.status(200).json({ 
-        message: `¡Entrada de diario ${journal.id} eliminada correctamente!`,
-        journal 
-    });
+exports.deleteJournal = async function(req, res) {
+    await Journal.findByIdAndDelete(req.journal._id);
+    res.status(200).json({ message: "¡Entrada eliminada!", journal: req.journal });
 };

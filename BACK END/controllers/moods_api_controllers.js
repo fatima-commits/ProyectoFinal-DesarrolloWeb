@@ -1,223 +1,153 @@
-const fs = require('fs');
-const path = require('path');
-const { Mood, MoodException, moods } = require('../models/mood');
+const Mood = require('../models/mood');
+const User = require('../models/user');
 
-// Leer usuarios dinámicamente
-function getUsers() {
+exports.authUserMiddleware = async function(req, res, next) {
     try {
-        return JSON.parse(
-            fs.readFileSync(path.join(__dirname, '../database/users.json'), 'utf-8')
-        );
-    } catch (error) {
-        return [];
+        const auth = req.headers['x-auth'];
+        if (!auth) return res.status(401).json({ error: "Acceso no autorizado" });
+
+        const user = await User.findOne({ contraseña: auth });
+        if (!user) return res.status(401).json({ error: "Usuario no encontrado" });
+
+        req.user = user;
+        next();
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
-}
+};
 
-// ==========================================
-// FUNCIONES DE CREACIÓN
-// ==========================================
-
-exports.createMood = function(req, res) {
-    const auth = req.headers['x-auth'];
-    if (!auth) return res.status(401).json({ error: "Acceso no autorizado" });
-
-    const users = getUsers();
-    let user = users.find(u => u.contraseña === auth);
-    if (!user) return res.status(401).json({ error: "Usuario no encontrado" });
-
-    const { moodValue, date } = req.body;
-
-    // Validaciones
-    if (moodValue === undefined || moodValue === null) {
-        return res.status(400).json({ error: "El valor de mood es obligatorio" });
-    }
-
-    let newMood;
+exports.authMoodsMiddleware = async function(req, res, next) {
     try {
-        newMood = new Mood(moodValue, user.id, date || new Date());
-    } catch (error) {
-        return res.status(400).json({ error: error.errorMessage });
+        const auth = req.headers['x-auth'];
+        if (!auth) return res.status(401).json({ error: "Acceso no autorizado" });
+
+        const mood = await Mood.findById(req.params.id);
+        if (!mood) return res.status(404).json({ error: "Mood no encontrado" });
+
+        const user = await User.findOne({ contraseña: auth });
+        if (!user) return res.status(401).json({ error: "Usuario no encontrado" });
+
+        if (mood.id_user.toString() !== user._id.toString())
+            return res.status(401).json({ error: "No tienes permiso" });
+
+        req.mood = mood;
+        next();
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
-
-    moods.push(newMood.toObj());
-    fs.writeFileSync(
-        path.join(__dirname, '../database/moods.json'),
-        JSON.stringify(moods, null, 2),
-        'utf-8'
-    );
-
-    res.status(201).json({
-        message: "¡Mood registrado exitosamente!",
-        mood: newMood.toObj()
-    });
 };
 
-// ==========================================
-// FUNCIONES DE LECTURA
-// ==========================================
+exports.createMood = async function(req, res) {
+    try {
+        const auth = req.headers['x-auth'];
+        
+        const user = await User.findOne({ contraseña: auth });
+        
+        const { moodValue, date } = req.body;
 
-exports.authUserMiddleware = function(req, res, next) {
-    const auth = req.headers['x-auth'];
-    if (!auth) return res.status(401).json({ error: "Acceso no autorizado" });
-
-    const users = getUsers();
-    let user = users.find(u => u.contraseña === auth);
-    if (!user) return res.status(401).json({ error: "Usuario no encontrado" });
-
-    req.user = user;
-    next();
-};
-
-exports.authMoodsMiddleware = function(req, res, next) {
-    const auth = req.headers['x-auth'];
-    const id_mood = req.params.id;
-
-    if (!auth) return res.status(401).json({ error: "Acceso no autorizado" });
-
-    let mood = moods.find(m => m.id === Number(id_mood));
-    if (!mood) return res.status(404).json({ error: "Mood no encontrado" });
-
-    const users = getUsers();
-    let user = users.find(u => u.id === mood.id_user);
-    if (auth !== user.contraseña) return res.status(401).json({ error: "Contraseña incorrecta" });
-
-    req.mood = mood;
-    next();
-};
-
-exports.getAllMoods = function(req, res) {
-    let userMoods = moods.filter(mood => mood.id_user === req.user.id);
-
-    // Filtrar por rango de fechas
-    if (req.query.startDate && req.query.endDate) {
-        const startDate = new Date(req.query.startDate);
-        const endDate = new Date(req.query.endDate);
-        userMoods = userMoods.filter(mood => {
-            const moodDate = new Date(mood.date);
-            return moodDate >= startDate && moodDate <= endDate;
+        const newMood = new Mood({
+            moodValue: Math.round(Number(moodValue)),
+            date: date || new Date(),
+            id_user: user._id
         });
+        
+        await newMood.save();
+        res.status(201).json({ message: "¡Mood registrado!", mood: newMood });
+    } catch (err) {
+        console.log('ERROR:', err.message);
+        res.status(400).json({ error: err.message });
+    }
+};
+
+exports.getAllMoods = async function(req, res) {
+    const filter = { id_user: req.user._id };
+
+    if (req.query.startDate && req.query.endDate) {
+        filter.date = {
+            $gte: new Date(req.query.startDate),
+            $lte: new Date(req.query.endDate)
+        };
     }
 
-    // Filtrar por label
-    if (req.query.label) {
-        userMoods = userMoods.filter(mood => mood.label === req.query.label);
-    }
+    if (req.query.label) filter.label = req.query.label;
 
-    // Ordenar por fecha descendente (más reciente primero)
-    userMoods.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-    // Paginación
     const page = Number(req.query.page || 1);
     const limit = Number(req.query.limit || 10);
-    const total = userMoods.length;
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
+    const skip = (page - 1) * limit;
 
-    const data = userMoods.slice(startIndex, endIndex);
-    const next_page = endIndex < total ? page + 1 : null;
+    const total = await Mood.countDocuments(filter);
+    const data = await Mood.find(filter).sort({ date: -1 }).skip(skip).limit(limit);
+    const next_page = skip + limit < total ? page + 1 : null;
 
-    res.status(200).json({ 
-        page, 
-        next_page, 
-        limit, 
-        total, 
-        data 
-    });
+    res.status(200).json({ page, next_page, limit, total, data });
 };
 
 exports.getMood = function(req, res) {
     res.status(200).json(req.mood);
 };
 
-exports.getWeeklyMoods = function(req, res) {
-    const userMoods = moods.filter(m => m.id_user === req.user.id);
-    
-    // Obtener últimos 7 días
+exports.getTodayMood = async function(req, res) {
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
+    const end = new Date();
+    end.setHours(23, 59, 59, 999);
+
+    const mood = await Mood.findOne({
+        id_user: req.user._id,
+        date: { $gte: start, $lte: end }
+    });
+
+    if (!mood) return res.status(404).json({ error: "No hay mood para hoy" });
+
+    res.status(200).json(mood);
+};
+
+exports.getWeeklyMoods = async function(req, res) {
     const today = new Date();
-    const weekMoods = {};
+    const weekAgo = new Date();
+    weekAgo.setDate(today.getDate() - 6);
+    weekAgo.setHours(0, 0, 0, 0);
 
-    for (let i = 0; i < 7; i++) {
-        const date = new Date(today);
-        date.setDate(today.getDate() - i);
-        const dateKey = date.toISOString().split('T')[0];
-        
-        const moodForDay = userMoods.find(m => m.date.split('T')[0] === dateKey);
-        weekMoods[dateKey] = moodForDay || null;
-    }
+    const moods = await Mood.find({
+        id_user: req.user._id,
+        date: { $gte: weekAgo }
+    }).sort({ date: 1 });
 
-    res.status(200).json(weekMoods);
+    const result = {};
+    moods.forEach(mood => {
+        const dateKey = new Date(mood.date).toISOString().split('T')[0];
+        result[dateKey] = mood;
+    });
+
+    res.status(200).json(result);
 };
 
-exports.getTodayMood = function(req, res) {
-    const today = new Date().toISOString().split('T')[0];
-    const userMoods = moods.filter(m => m.id_user === req.user.id);
-    const todayMood = userMoods.find(m => m.date.split('T')[0] === today);
-
-    if (!todayMood) {
-        return res.status(404).json({ error: "No hay registro de mood para hoy" });
-    }
-
-    res.status(200).json(todayMood);
-};
-
-// ==========================================
-// FUNCIONES DE ACTUALIZACIÓN
-// ==========================================
-
-exports.updateMood = function(req, res) {
+exports.updateMood = async function(req, res) {
     const { moodValue } = req.body;
+    if (moodValue === undefined)
+        return res.status(400).json({ error: "Debes enviar el valor de mood" });
 
-    if (moodValue === undefined) {
-        return res.status(400).json({ 
-            error: "Debes enviar el valor de mood para actualizar" 
-        });
-    }
-
-    let mood = req.mood;
-    const moodIndex = moods.findIndex(m => m.id === mood.id);
+    const num = Math.round(Number(moodValue));
+    let label;
+    if (num < 25) label = 'Angry';
+    else if (num < 50) label = 'Sad';
+    else if (num < 75) label = 'Okay';
+    else label = 'Happy';
 
     try {
-        // Crear un nuevo Mood para validar
-        const tempMood = new Mood(moodValue, mood.id_user, mood.date);
-        moods[moodIndex].moodValue = tempMood.moodValue;
-        moods[moodIndex].label = tempMood.label;
-        moods[moodIndex].updatedAt = new Date().toISOString();
-    } catch (error) {
-        return res.status(400).json({ error: error.errorMessage });
+        const updated = await Mood.findByIdAndUpdate(
+            req.mood._id,
+            { moodValue: num, label },
+            { new: true, runValidators: true }
+        );
+
+        res.status(200).json({ message: "¡Mood actualizado!", mood: updated });
+    } catch (err) {
+        res.status(400).json({ error: err.message });
     }
-
-    fs.writeFileSync(
-        path.join(__dirname, '../database/moods.json'),
-        JSON.stringify(moods, null, 2),
-        'utf-8'
-    );
-
-    res.status(200).json({ 
-        message: "¡Mood actualizado correctamente!",
-        mood: moods[moodIndex]
-    });
 };
 
-// ==========================================
-// FUNCIONES DE ELIMINACIÓN
-// ==========================================
-
-exports.deleteMood = function(req, res) {
-    let mood = req.mood;
-    const index = moods.findIndex(m => m.id === mood.id);
-    
-    if (index !== -1) {
-        moods.splice(index, 1);
-    }
-
-    fs.writeFileSync(
-        path.join(__dirname, '../database/moods.json'),
-        JSON.stringify(moods, null, 2),
-        'utf-8'
-    );
-
-    res.status(200).json({ 
-        message: `¡Mood ${mood.id} eliminado correctamente!`,
-        mood 
-    });
+exports.deleteMood = async function(req, res) {
+    await Mood.findByIdAndDelete(req.mood._id);
+    res.status(200).json({ message: "¡Mood eliminado!", mood: req.mood });
 };
