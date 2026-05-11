@@ -25,6 +25,8 @@ function isHabitDoneToday(habitId) {
 
 // Marca o desmarca un hábito para hoy y actualiza la tarjeta en el DOM
 function toggleHabit(habitId) {
+    console.log('toggleHabit llamado con ID:', habitId);
+    
     const completed = getCompletedHabits();
     const today = getTodayKey();
 
@@ -39,13 +41,18 @@ function toggleHabit(habitId) {
     }
 
     localStorage.setItem('completedHabits', JSON.stringify(completed));
+    console.log('Estado guardado en localStorage:', completed);
 
     // Actualizar la tarjeta en el DOM sin recargar toda la lista
     const card = document.getElementById(`habit-${habitId}`);
+    console.log('Buscando tarjeta con ID:', `habit-${habitId}`, 'Encontrada:', !!card);
+    
     if (card) {
         const btn   = card.querySelector('.btn-check');
         const title = card.querySelector('.habit-card-title');
         const sub   = card.querySelector('.habit-card-subtitle');
+
+        console.log('Elementos encontrados - btn:', !!btn, 'title:', !!title, 'sub:', !!sub);
 
         if (wasDone) {
             // Desmarcar
@@ -132,8 +139,13 @@ function createHabit(event) {
 // ==========================================
 
 function loadHabits(day = null) {
+    console.log('loadHabits llamado con day:', day);
+    
     const user = JSON.parse(sessionStorage.getItem('user'));
-    if (!user) return;
+    if (!user) {
+        console.log('Usuario no encontrado en sesión');
+        return;
+    }
 
     let url = '/habits?limit=100';
     if (day) url += `&day=${day}`;
@@ -146,15 +158,22 @@ function loadHabits(day = null) {
         return res.json();
     })
     .then(data => {
+        console.log('Hábitos cargados:', data.data);
         displayHabits(data.data, !day);
     })
-    .catch(err => showNotification(err.message, "error"));
+    .catch(err => {
+        console.error('Error al cargar hábitos:', err);
+        showNotification(err.message, "error");
+    });
 
     updateFilterVisual(day);
 }
 
 function displayHabits(habits, animated = false) {
     const list = document.getElementById('habitsList');
+    console.log('displayHabits - habitsList encontrado:', !!list);
+    console.log('displayHabits - hábitos a mostrar:', habits.length);
+    
     if (!list) return;
 
     list.innerHTML = '';
@@ -165,6 +184,7 @@ function displayHabits(habits, animated = false) {
     }
 
     habits.forEach((habit, index) => {
+        console.log(`Creando tarjeta para hábito: ${habit.title} (ID: ${habit._id})`);
         const card = createHabitCard(habit);
         if (animated) {
             card.style.animation = `scaleIn 0.6s ease-out ${0.25 + index * 0.05}s forwards`;
@@ -181,6 +201,8 @@ function createHabitCard(habit) {
     card.className = `habit-card ${habit.color}-bg${isDone ? ' completed' : ''}`;
     card.id = `habit-${habit._id}`;
 
+    console.log(`Creando tarjeta con ID: ${card.id}, isDone: ${isDone}`);
+
     const daysDisplay = habit.days.map(d => dayNames[d - 1]).join(' ');
 
     card.innerHTML = `
@@ -194,7 +216,8 @@ function createHabitCard(habit) {
         </div>
         <button class="btn-check ${isDone ? 'done' : ''}"
                 title="${isDone ? 'Desmarcar hábito' : 'Marcar como completado'}"
-                onclick="toggleHabit(\`${habit._id}\`)">
+                type="button"
+                onclick="toggleHabit('${habit._id}')">
             ${isDone ? '✓' : '○'}
         </button>
     </div>
@@ -202,8 +225,8 @@ function createHabitCard(habit) {
         ${habit.days.map(d => `<span class="day-badge">${dayNames[d - 1]}</span>`).join('')}
     </div>
     <div class="habit-card-actions">
-        <button class="btn-small btn-edit" onclick="editHabit(\`${habit._id}\`)">Editar</button>
-        <button class="btn-small btn-delete" onclick="deleteHabit(\`${habit._id}\`)">Eliminar</button>
+        <button class="btn-small btn-edit" type="button" onclick="editHabit('${habit._id}')">Editar</button>
+        <button class="btn-small btn-delete" type="button" onclick="deleteHabit('${habit._id}')">Eliminar</button>
     </div>
 `;
 
@@ -382,12 +405,21 @@ function loadToday() {
 // ==========================================
 
 function initHabits() {
+    console.log('initHabits iniciado');
+    
     const user = JSON.parse(sessionStorage.getItem('user'));
-    if (!user) return window.location.href = local_url;
+    console.log('Usuario en sesión:', !!user);
+    
+    if (!user) {
+        console.log('Sin usuario, redirigiendo al login');
+        return window.location.href = local_url;
+    }
 
+    console.log('Cargando hábitos iniciales...');
     loadHabits();
 
     const form = document.getElementById('habitForm');
+    console.log('Formulario encontrado:', !!form);
     if (form) form.addEventListener('submit', createHabit);
 
     document.querySelectorAll('.day-selector').forEach(btn => {
@@ -403,9 +435,13 @@ function initHabits() {
 
     const backBtn = document.querySelector('.back-btn-main');
     if (backBtn) backBtn.addEventListener('click', goBack);
-
-    const btnNuevo = document.getElementById('btnNuevoHabito');
-    if (btnNuevo) btnNuevo.addEventListener('click', () => switchScreen('new-habit'));
 }
 
-document.addEventListener('DOMContentLoaded', initHabits);
+// Asegurar ejecución en DOMContentLoaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initHabits);
+} else {
+    // Si el DOM ya se cargó
+    console.log('DOM ya estaba cargado, inicializando hábitos ahora');
+    initHabits();
+}

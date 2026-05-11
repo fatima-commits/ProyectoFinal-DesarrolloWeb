@@ -110,6 +110,12 @@
     <script src="../controllers/env.js"></script>
     <script src="../controllers/auth_controller.js"></script>
     <script src="../controllers/habits_controller.js"></script>
-
+    <script>
+        // Asegurar que initHabits se ejecute cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM cargado, inicializando hábitos...');
+            initHabits();
+        });
+    </script>
 </body>
 </html>

@@ -736,6 +736,14 @@ body {
 
 .btn-active:hover, .btn-paused:hover { background: rgba(255, 255, 255, 0.25); }
 
+/* ==========================================
+   BADGE DE ESTADO (no se usa, mantenido para referencia)
+========================================== */
+
+/* ==========================================
+   NOTIFICACIONES
+========================================== */
+
 .notification {
     position: fixed;
     bottom: -80px;
