@@ -313,13 +313,15 @@ function deleteHabit(habitId) {
     });
 }
 
-function switchScreen(screen) {
-    // Asegurar que screen viene sin el sufijo '-screen'
-    const screenName = screen === 'all-habits' ? 'all-habits-screen' : 'new-habit-screen';
-    document.querySelectorAll('.screen-wrapper').forEach(s => {
-        s.style.display = 'none';
+// ==========================================
+// UTILIDADES
+// ==========================================
+
+function switchScreen(screenId) {
+    document.querySelectorAll('.screen-wrapper').forEach(screen => {
+        screen.style.display = 'none';
     });
-    const selectedScreen = document.getElementById(screenName);
+    const selectedScreen = document.getElementById(screenId + '-screen');
     if (selectedScreen) selectedScreen.style.display = 'flex';
 }
 
