@@ -1,4 +1,3 @@
-<!doctype html>
 <html lang="es">
 <head>
     <title>Settings</title>
@@ -17,19 +16,32 @@
 
         <!-- Header -->
         <header class="header">
-            <p class="page-label">Ajustes</p>
-            <h1 class="main-title">Tu perfil</h1>
+            <p class="page-label">Settings</p>
+            <h1 class="main-title">Your profile</h1>
         </header>
 
         <!-- Foto + nombre -->
         <div class="profile-section">
             <div class="avatar-wrapper">
-                <span class="avatar-placeholder">👤</span>
-                <span class="avatar-edit-btn">📷</span>
+                <!-- Input file oculto -->
+                <input 
+                    type="file" 
+                    id="profilePhotoInput" 
+                    accept="image/*" 
+                    style="display: none;"
+                />
+                
+                <!-- Imagen de perfil o placeholder -->
+                <img id="avatarImg" class="avatar-img" style="display: none;" alt="Profile photo">
+                <span id="avatarPlaceholder" class="avatar-placeholder">👤</span>
+                
+                <!-- Botón para editar foto -->
+                <button id="avatarEditBtn" class="avatar-edit-btn" type="button" title="Cambiar foto de perfil">📷</button>
             </div>
+
             <div class="name-wrapper">
-                <input type="text" class="name-input">
-                <span class="field-hint">Selecciona para editar</span>
+                <input type="text" class="name-input" id="nameInput" placeholder="Tu nombre">
+                <span class="field-hint">Tap to edit</span>
             </div>
         </div>
 
@@ -38,13 +50,13 @@
 
             <!-- Cuerpo -->
             <div class="settings-group">
-                <p class="group-label">Cuerpo</p>
+                <p class="group-label">Body</p>
                 <div class="field-row">
                     <span class="field-icon">⚖️</span>
                     <div class="field-content">
-                        <label class="field-label">Peso</label>
+                        <label class="field-label">Weight</label>
                         <div class="field-input-row">
-                            <input type="number" class="field-input" id="weightInput">
+                            <input type="number" class="field-input" id="weightInput" placeholder="70">
                             <span class="field-unit">kg</span>
                         </div>
                     </div>
@@ -53,9 +65,9 @@
                 <div class="field-row">
                     <span class="field-icon">📏</span>
                     <div class="field-content">
-                        <label class="field-label">Altura</label>
+                        <label class="field-label">Height</label>
                         <div class="field-input-row">
-                            <input type="number" class="field-input" id="heightInput">
+                            <input type="number" class="field-input" id="heightInput" placeholder="175">
                             <span class="field-unit">cm</span>
                         </div>
                     </div>
@@ -69,25 +81,27 @@
                     <span class="field-icon">✉️</span>
                     <div class="field-content">
                         <label class="field-label">Email</label>
-                        <input type="email" class="field-input full">
+                        <input type="email" class="field-input full" id="emailInput" placeholder="tu@email.com">
                     </div>
                 </div>
                 <div class="divider"></div>
                 <div class="field-row">
                     <span class="field-icon">🔒</span>
                     <div class="field-content">
-                        <label class="field-label">Contraseña</label>
+                        <label class="field-label">Password</label>
                         <div class="field-input-row">
-                            <input type="password" class="field-input full">
-                            <div class="field-input-row">
-                                <input type="password" class="field-input full" id="passwordInput" value="MaRiAn4;" readonly>
-                                <button class="toggle-pass" onclick="togglePassword()">👁</button>
-                            </div>
+                            <input type="password" class="field-input full" id="passwordInput" readonly>
+                            <button class="toggle-pass" type="button" onclick="togglePassword()">👁</button>
                         </div>
                     </div>
                 </div>
             </div>
 
+        </div>
+
+        <!-- Notificación de carga de imagen -->
+        <div id="uploadNotification" class="upload-notification" style="display: none;">
+            <span id="notificationText">Foto subida exitosamente</span>
         </div>
 
         <!-- Botón guardar -->
@@ -104,5 +118,6 @@
 
     <script src="../controllers/env.js"></script>
     <script src="../controllers/auth_controller.js"></script>
+    <script src="../controllers/settings_controller.js"></script>
 </body>
 </html>
