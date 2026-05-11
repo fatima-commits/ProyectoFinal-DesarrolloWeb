@@ -56,51 +56,29 @@ body {
 }
 
 @keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-40px);
-        filter: blur(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-        filter: blur(0);
-    }
+    from { opacity: 0; transform: translateY(-40px); filter: blur(10px); }
+    to   { opacity: 1; transform: translateY(0);     filter: blur(0); }
 }
 
 @keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(40px);
-        filter: blur(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-        filter: blur(0);
-    }
+    from { opacity: 0; transform: translateY(40px);  filter: blur(10px); }
+    to   { opacity: 1; transform: translateY(0);     filter: blur(0); }
 }
 
 @keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes scaleIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+    from { opacity: 0; transform: scale(0.95); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes checkPop {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.35); }
+    100% { transform: scale(1); }
 }
 
 /* CONTENEDOR PRINCIPAL */
@@ -142,9 +120,7 @@ body {
     transition: var(--transition);
 }
 
-.header-action:hover {
-    color: var(--accent-blue-light);
-}
+.header-action:hover { color: var(--accent-blue-light); }
 
 /* FILTROS */
 .filters-container {
@@ -184,11 +160,10 @@ body {
     gap: 16px;
 }
 
-/* TARJETAS DE HÁBITOS CON FONDO DE COLOR */
 .habit-card {
     border-radius: 16px;
-    padding: 24px 16px;
-    cursor: pointer;
+    padding: 20px 16px;
+    cursor: default;
     transition: var(--transition);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
     display: flex;
@@ -203,87 +178,158 @@ body {
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
 }
 
-/* Colores de las tarjetas */
-.habit-card.orange-bg {
-    background: linear-gradient(135deg, #FFA451 0%, #FFB86B 100%);
+/* Colores */
+.habit-card.orange-bg { background: linear-gradient(135deg, #FFA451 0%, #FFB86B 100%); }
+.habit-card.purple-bg { background: linear-gradient(135deg, #B8A8E6 0%, #D0B8FF 100%); }
+.habit-card.pink-bg   { background: linear-gradient(135deg, #FFB8D1 0%, #FFC9E3 100%); }
+.habit-card.cyan-bg   { background: linear-gradient(135deg, #7FE7E0 0%, #A8EFEB 100%); }
+
+.habit-card.completed {
+    opacity: 0.72;
+    filter: saturate(0.5);
+    transform: none !important;
 }
 
-.habit-card.purple-bg {
-    background: linear-gradient(135deg, #B8A8E6 0%, #D0B8FF 100%);
+.habit-card.completed:hover {
+    transform: translateY(-3px) !important;
+    opacity: 0.82;
 }
 
-.habit-card.pink-bg {
-    background: linear-gradient(135deg, #FFB8D1 0%, #FFC9E3 100%);
+/* Texto cruzado */
+.habit-card-title.crossed,
+.habit-card-subtitle.crossed {
+    text-decoration: line-through;
+    text-decoration-thickness: 2px;
+    opacity: 0.65;
 }
 
-.habit-card.cyan-bg {
-    background: linear-gradient(135deg, #7FE7E0 0%, #A8EFEB 100%);
+.habit-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
 }
 
-/* HEADER TARJETA */
-.habit-card-header {
-    margin-bottom: 12px;
+.habit-card-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
 }
 
 .habit-card-icon {
     font-size: 40px;
-    display: inline-block;
+    display: block;
+    flex-shrink: 0;
+    line-height: 1;
 }
 
-/* Contenido de la tarjeta */
-.habit-card-content {
+.habit-card-info {
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin-bottom: 12px;
+    min-width: 0;
 }
 
 .habit-card-title {
     font-size: 16px;
     font-weight: 700;
-    margin: 0 0 6px 0;
+    margin: 0 0 4px 0;
     font-family: 'Poppins', sans-serif;
-    line-height: 1.3;
+    line-height: 1.2;
+    word-break: break-word;
+    transition: var(--transition);
 }
 
 .habit-card-subtitle {
     font-size: 12px;
     font-weight: 500;
     opacity: 0.9;
-    margin: 0 0 8px 0;
-}
-
-.habit-card-time {
-    font-size: 12px;
-    font-weight: 500;
-    opacity: 0.8;
     margin: 0;
+    transition: var(--transition);
+    word-break: break-word;
 }
 
-/* Días de la semana en la tarjeta */
+/* ==========================================
+   BOTÓN DE CHECK
+========================================== */
+
+.btn-check {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2.5px solid rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.25);
+    color: white;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    backdrop-filter: blur(4px);
+    flex-shrink: 0;
+    line-height: 1;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-check:hover {
+    background: rgba(255, 255, 255, 0.4);
+    border-color: white;
+    transform: scale(1.12);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.btn-check:active {
+    transform: scale(0.95);
+}
+
+/* Cuando está marcado */
+.btn-check.done {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: white;
+    color: #2e7d32;
+    animation: checkPop 0.35s ease-out;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.btn-check.done:hover {
+    background: white;
+    transform: scale(1.12);
+}
+
+/* ==========================================
+   DÍAS
+========================================== */
+
 .habit-card-days {
     display: flex;
     gap: 8px;
     font-size: 12px;
     font-weight: 600;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
 }
 
-.habit-card-days span {
+.day-badge {
     width: 28px;
     height: 28px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
     background: rgba(255, 255, 255, 0.3);
-    border-radius: 6px;
     color: white;
 }
 
-.habit-card-days .day-active {
-    background: rgba(255, 255, 255, 0.6);
-    font-weight: 700;
-}
+/* ==========================================
+   OTROS ESTILOS DE TARJETA (legado)
+========================================== */
 
 .habit-item {
     background: var(--bg-card);
@@ -308,12 +354,7 @@ body {
     box-shadow: 0 12px 32px rgba(76, 175, 80, 0.2);
 }
 
-.habit-header {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 12px;
-}
+.habit-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
 
 .habit-icon {
     width: 40px;
@@ -326,29 +367,12 @@ body {
     flex-shrink: 0;
 }
 
-.habit-icon.orange {
-    background: rgba(249, 115, 22, 0.2);
-    color: #F97316;
-}
+.habit-icon.orange  { background: rgba(249, 115, 22, 0.2);  color: #F97316; }
+.habit-icon.pink    { background: rgba(236, 72, 153, 0.2);   color: #EC4899; }
+.habit-icon.purple  { background: rgba(168, 85, 247, 0.2);   color: #A855F7; }
+.habit-icon.cyan    { background: rgba(6, 182, 212, 0.2);    color: #06B6D4; }
 
-.habit-icon.pink {
-    background: rgba(236, 72, 153, 0.2);
-    color: #EC4899;
-}
-
-.habit-icon.purple {
-    background: rgba(168, 85, 247, 0.2);
-    color: #A855F7;
-}
-
-.habit-icon.cyan {
-    background: rgba(6, 182, 212, 0.2);
-    color: #06B6D4;
-}
-
-.habit-info {
-    flex: 1;
-}
+.habit-info { flex: 1; }
 
 .habit-title {
     font-size: 15px;
@@ -358,16 +382,9 @@ body {
     margin-bottom: 3px;
 }
 
-.habit-subtitle {
-    font-size: 12px;
-    color: var(--text-tertiary);
-}
+.habit-subtitle { font-size: 12px; color: var(--text-tertiary); }
 
-.habit-days {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 8px;
-}
+.habit-days { display: flex; gap: 6px; margin-bottom: 8px; }
 
 .day-badge {
     width: 28px;
@@ -377,25 +394,21 @@ body {
     align-items: center;
     justify-content: center;
     font-size: 11px;
-    font-weight: 600;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(76, 175, 80, 0.2);
-    color: var(--text-secondary);
-    transition: var(--transition);
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
 }
 
-.day-badge.active {
-    background: rgba(76, 175, 80, 0.3);
-    border-color: rgba(76, 175, 80, 0.6);
-    color: var(--primary-light);
-}
+/* ==========================================
+   FORMULARIO NUEVO HÁBITO
+========================================== */
 
-/* NEW HABIT */
+.screen-wrapper { min-height: 100vh; }
+
 .new-habit-form {
+    padding: 24px 16px;
     flex: 1;
-    padding: 20px 16px;
     overflow-y: auto;
-    animation: slideUp 0.8s ease-out;
 }
 
 .form-header {
@@ -405,11 +418,7 @@ body {
     margin-bottom: 30px;
 }
 
-.form-title {
-    font-size: 22px;
-    font-weight: 700;
-    font-family: 'Poppins', sans-serif;
-}
+.form-title { font-size: 22px; font-weight: 700; font-family: 'Poppins', sans-serif; }
 
 .form-back {
     background: transparent;
@@ -423,10 +432,7 @@ body {
     margin: 0;
 }
 
-.form-back:hover {
-    color: var(--text-primary);
-}
-
+.form-back:hover { color: var(--text-primary); }
 
 .day-selector {
     padding: 8px 16px;
@@ -446,6 +452,7 @@ body {
     border-color: rgba(76, 175, 80, 0.6);
     color: #5FCC69;
 }
+
 .cancel-btn {
     background: transparent;
     border: none;
@@ -456,9 +463,7 @@ body {
     transition: var(--transition);
 }
 
-.cancel-btn:hover {
-    color: var(--accent-blue-light);
-}
+.cancel-btn:hover { color: var(--accent-blue-light); }
 
 .form-group {
     margin-bottom: 24px;
@@ -492,9 +497,7 @@ body {
     transition: var(--transition);
 }
 
-.form-input::placeholder {
-    color: var(--text-tertiary);
-}
+.form-input::placeholder { color: var(--text-tertiary); }
 
 .form-input:focus {
     outline: none;
@@ -503,11 +506,7 @@ body {
     box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
 }
 
-.option-group {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
+.option-group { display: flex; gap: 8px; flex-wrap: wrap; }
 
 .option-btn {
     padding: 8px 16px;
@@ -528,10 +527,7 @@ body {
     color: var(--primary-light);
 }
 
-.color-picker {
-    display: flex;
-    gap: 12px;
-}
+.color-picker { display: flex; gap: 12px; }
 
 .color-dot {
     width: 40px;
@@ -542,26 +538,12 @@ body {
     transition: var(--transition);
 }
 
-.color-dot.orange {
-    background: #F97316;
-}
+.color-dot.orange { background: #F97316; }
+.color-dot.pink   { background: #EC4899; }
+.color-dot.purple { background: #A855F7; }
+.color-dot.cyan   { background: #06B6D4; }
 
-.color-dot.pink {
-    background: #EC4899;
-}
-
-.color-dot.purple {
-    background: #A855F7;
-}
-
-.color-dot.cyan {
-    background: #06B6D4;
-}
-
-.color-dot.active {
-    border-color: white;
-    transform: scale(1.1);
-}
+.color-dot.active { border-color: white; transform: scale(1.1); }
 
 .create-habit-btn {
     width: 100%;
@@ -584,7 +566,10 @@ body {
     box-shadow: 0 12px 32px rgba(37, 99, 235, 0.4);
 }
 
-/* NAV */
+/* ==========================================
+   NAV
+========================================== */
+
 .bottom-nav {
     display: flex;
     justify-content: space-around;
@@ -611,50 +596,38 @@ body {
 }
 
 .nav-item:hover,
-.nav-item.active {
-    color: var(--accent-blue);
-}
+.nav-item.active { color: var(--accent-blue); }
 
-.nav-icon {
-    font-size: 20px;
-}
+.nav-icon { font-size: 20px; }
 
-/* RESPONSIVo */
+/* ==========================================
+   RESPONSIVO
+========================================== */
+
 @media (max-width: 480px) {
-    .habits-container {
-        max-width: 100%;
+    .habits-container { max-width: 100%; }
+    .welcome-illustration { width: 160px; height: 160px; font-size: 80px; }
+    .welcome-title { font-size: 28px; }
+    .header-title { font-size: 20px; }
+    .filter-btn { padding: 6px 12px; font-size: 12px; }
+    .habit-item { padding: 12px; }
+    .form-group { margin-bottom: 20px; }
+    .color-dot { width: 36px; height: 36px; }
+    
+    /* Botón check en móvil */
+    .btn-check { 
+        width: 40px; 
+        height: 40px; 
+        font-size: 18px; 
+        border-width: 2px;
     }
-
-    .welcome-illustration {
-        width: 160px;
-        height: 160px;
-        font-size: 80px;
+    
+    .habit-card-icon {
+        font-size: 36px;
     }
-
-    .welcome-title {
-        font-size: 28px;
-    }
-
-    .header-title {
-        font-size: 20px;
-    }
-
-    .filter-btn {
-        padding: 6px 12px;
-        font-size: 12px;
-    }
-
-    .habit-item {
-        padding: 12px;
-    }
-
-    .form-group {
-        margin-bottom: 20px;
-    }
-
-    .color-dot {
-        width: 36px;
-        height: 36px;
+    
+    .habit-card-title {
+        font-size: 15px;
     }
 }
 
@@ -666,7 +639,10 @@ body {
     }
 }
 
-/* FOOTER */
+/* ==========================================
+   FOOTER
+========================================== */
+
 .meditation-footer {
     text-align: center;
     margin-top: 40px;
@@ -708,7 +684,10 @@ body {
     color: var(--primary-light);
 }
 
-/* BOTONES DE ACCIONES EN TARJETA */
+/* ==========================================
+   BOTONES DE ACCIONES EN TARJETA
+========================================== */
+
 .habit-card-actions {
     display: flex;
     gap: 8px;
@@ -728,23 +707,11 @@ body {
     backdrop-filter: blur(4px);
 }
 
-.btn-edit {
-    background: rgba(255, 255, 255, 0.25);
-    color: white;
-}
+.btn-edit    { background: rgba(255, 255, 255, 0.25); color: white; }
+.btn-edit:hover { background: rgba(255, 255, 255, 0.4); }
 
-.btn-edit:hover {
-    background: rgba(255, 255, 255, 0.4);
-}
-
-.btn-delete {
-    background: rgba(220, 53, 69, 0.3);
-    color: white;
-}
-
-.btn-delete:hover {
-    background: rgba(220, 53, 69, 0.5);
-}
+.btn-delete  { background: rgba(220, 53, 69, 0.3); color: white; }
+.btn-delete:hover { background: rgba(220, 53, 69, 0.5); }
 
 .btn-active, .btn-paused {
     background: rgba(255, 255, 255, 0.15);
@@ -752,26 +719,59 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.btn-active:hover, .btn-paused:hover {
-    background: rgba(255, 255, 255, 0.25);
-}
+.btn-active:hover, .btn-paused:hover { background: rgba(255, 255, 255, 0.25); }
 
-/* BADGE DE ESTADO */
-.status-badge {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 10px;
-    font-weight: 700;
+/* ==========================================
+   BADGE DE ESTADO (no se usa, mantenido para referencia)
+========================================== */
+
+/* ==========================================
+   NOTIFICACIONES
+========================================== */
+
+.notification {
+    position: fixed;
+    bottom: -80px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
     font-family: 'Poppins', sans-serif;
+    z-index: 9999;
+    transition: bottom 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    white-space: nowrap;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
 }
 
-.status-badge.active {
-    background: rgba(255, 255, 255, 0.3);
-    color: white;
+.notification.show { bottom: 24px; }
+
+.notification.success { background: #2e7d32; color: white; }
+.notification.error   { background: #c62828; color: white; }
+.notification.info    { background: #1565c0; color: white; }
+
+/* Asegurar que el botón de check sea visible */
+.btn-check {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 50% !important;
+    border: 2.5px solid rgba(255, 255, 255, 0.8) !important;
+    background: rgba(255, 255, 255, 0.25) !important;
+    color: white !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    line-height: 1 !important;
+    padding: 0 !important;
+    font-family: 'Poppins', sans-serif !important;
 }
 
-.status-badge.paused {
-    background: rgba(0, 0, 0, 0.2);
-    color: rgba(255, 255, 255, 0.7);
+.btn-check.done {
+    background: rgba(255, 255, 255, 0.95) !important;
+    color: #2e7d32 !important;
 }

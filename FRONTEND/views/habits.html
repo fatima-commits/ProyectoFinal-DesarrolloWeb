@@ -19,7 +19,7 @@
 
             <!-- Filtros por día -->
             <div class="filters-container">
-                <button class="filter-btn active" onclick="loadHabits()">Todos</button>
+                <button class="filter-btn active" onclick="loadHabits(null)">Todos</button>
                 <button class="filter-btn" onclick="loadHabits(1)">L</button>
                 <button class="filter-btn" onclick="loadHabits(2)">M</button>
                 <button class="filter-btn" onclick="loadHabits(3)">X</button>
@@ -32,14 +32,12 @@
             <!-- Aquí se cargan los hábitos dinámicamente -->
             <div class="habits-list" id="habitsList"></div>
 
-            <div class="habits-list" id="habitsList"></div>
-
             <div class="bottom-nav">
                 <a class="nav-item active" onclick="loadToday()">
                     <span class="nav-icon">🏠</span>
                     <span>Hoy</span>
                 </a>
-                <a class="nav-item" id="btnNuevoHabito">
+                <a class="nav-item" id="btnNuevoHabito" onclick="switchScreen('new-habit')">
                     <span class="nav-icon">➕</span>
                     <span>Crear nuevo</span>
                 </a>
@@ -114,7 +112,5 @@
     <script>
         initHabits();
     </script>
-</body>
-</html>
 </body>
 </html>
