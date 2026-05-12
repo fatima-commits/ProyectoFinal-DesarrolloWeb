@@ -115,11 +115,7 @@ function saveUserChanges() {
 
 //Eliminar usuario
 function confirmDelete() {
-    let modalEdit = bootstrap.Modal.getInstance(document.getElementById('modalEdit'));
-    if (modalEdit) modalEdit.hide();
-
-    let modalDelete = new bootstrap.Modal(document.getElementById('modalDeleteUser'));
-    modalDelete.show();
+    document.getElementById('modalDeleteUser').style.display = 'flex';
 }
 
 function deleteUser() {
@@ -146,6 +142,10 @@ function deleteUser() {
     .catch(err => console.error("Error al eliminar usuario:", err));
 }
 
+function closeDeleteModal(event) {
+    if (event && event.target.id !== 'modalDeleteUser') return;
+    document.getElementById('modalDeleteUser').style.display = 'none';
+}
 
 //Datos Settings
 function populateSettings() {
