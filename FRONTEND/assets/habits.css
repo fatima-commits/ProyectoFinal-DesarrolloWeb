@@ -765,3 +765,24 @@ body {
 .notification.success { background: #2e7d32; color: white; }
 .notification.error   { background: #c62828; color: white; }
 .notification.info    { background: #1565c0; color: white; }
+
+.habit-card .habit-check-btn {
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 50% !important;
+    border: 3px solid rgba(0, 0, 0, 0.3) !important;
+    background: #FFFFFF !important;
+    color: #999999 !important;
+    font-size: 22px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    padding: 0 !important;
+}
+
+.habit-card .habit-check-btn.done {
+    background: #4CAF50 !important;
+    border-color: #2e7d32 !important;
+    color: #FFFFFF !important;
+}

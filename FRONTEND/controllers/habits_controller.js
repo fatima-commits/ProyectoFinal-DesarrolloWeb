@@ -48,7 +48,7 @@ function toggleHabit(habitId) {
     console.log('Buscando tarjeta con ID:', `habit-${habitId}`, 'Encontrada:', !!card);
     
     if (card) {
-        const btn   = card.querySelector('.btn-check');
+        const btn   = card.querySelector('.habit-check-btn');
         const title = card.querySelector('.habit-card-title');
         const sub   = card.querySelector('.habit-card-subtitle');
 
@@ -57,7 +57,7 @@ function toggleHabit(habitId) {
         if (wasDone) {
             // Desmarcar
             card.classList.remove('completed');
-            if (btn)   { btn.textContent = '○'; btn.classList.remove('done'); }
+            if (btn)   { btn.textContent = '✕'; btn.classList.remove('done'); }
             if (title) title.classList.remove('crossed');
             if (sub)   sub.classList.remove('crossed');
             showNotification('Hábito desmarcado', 'info');
@@ -214,11 +214,11 @@ function createHabitCard(habit) {
                 <p class="habit-card-subtitle${isDone ? ' crossed' : ''}">Después de ${habit.trigger}</p>
             </div>
         </div>
-        <button class="btn-check ${isDone ? 'done' : ''}"
+        <button class="habit-check-btn ${isDone ? 'done' : ''}"
                 title="${isDone ? 'Desmarcar hábito' : 'Marcar como completado'}"
                 type="button"
                 onclick="toggleHabit('${habit._id}')">
-            ${isDone ? '✓' : '○'}
+            ${isDone ? '✓' : '✕'}
         </button>
     </div>
     <div class="habit-card-days">
